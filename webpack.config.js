@@ -24,7 +24,13 @@ module.exports = {
     extensions: ['.ts', '.js']
   },
   devServer: {
-    contentBase: path.join(__dirname,"app"),
-    open: true
-  }
+    static: {
+      directory: path.resolve(__dirname,"app"),
+      staticOptions: {},
+      serveIndex: true,
+      watch: true,
+    },
+    open: true,
+  },
+  mode: 'development',
 };
