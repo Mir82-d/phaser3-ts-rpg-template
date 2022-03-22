@@ -12,7 +12,7 @@
     "webpack-dev-server": "4.7.4"
   },
   "dependencies": {
-    "@types/connect": "^3.4.35",
+    "grid-engine": "^2.13.1",
     "phaser": "3.55.2"
   },
   "scripts": {
