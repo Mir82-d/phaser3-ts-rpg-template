@@ -16,3 +16,6 @@ This is the template project for making RPG game with Phaser3-TypeScript.(WIP)
 ```
 yarn run local
 ```
+```
+yarn run dev
+```
