@@ -1,7 +1,6 @@
 import { GridEngine } from "grid-engine";
 import { Direction } from "grid-engine";
 import * as Phaser from "phaser";
-import { GameConfig } from "../config";
 
 export class MapTest extends Phaser.Scene {
 
@@ -54,9 +53,7 @@ export class MapTest extends Phaser.Scene {
                     walkingAnimationMapping: 1,
                     startPosition: {x: 10,y:17},
                     charLayer: "playerField",
-                    collides: {
-                        collisionGroups: ["1"],
-                    },
+                    collides: false,
                 },
                 {
                     id: "ally2",
@@ -64,9 +61,7 @@ export class MapTest extends Phaser.Scene {
                     walkingAnimationMapping: 2,
                     startPosition: {x: 10,y:18},
                     charLayer: "playerField",
-                    collides: {
-                        collisionGroups: ["2"],
-                    },
+                    collides: false,
                 },
                 {
                     id: "ally3",
@@ -74,9 +69,7 @@ export class MapTest extends Phaser.Scene {
                     walkingAnimationMapping: 3,
                     startPosition: {x: 10,y:17},
                     charLayer: "playerField",
-                    collides: {
-                        collisionGroups: ["3"],
-                    },
+                    collides: false,
                 },
             ],
         };
