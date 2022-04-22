@@ -5,7 +5,6 @@ export class GameTest extends Phaser.Scene {
     private description:  Phaser.GameObjects.Text
 
     preload() {
-        //this.load.image('logo', '../assets/img/phaser3-logo.png');
         this.load.image('logo', 'assets/img/phaser3-logo.png');
 
         this.load.glsl('boss', 'assets/shaders/boss.glsl.js');
@@ -18,7 +17,7 @@ export class GameTest extends Phaser.Scene {
 
         logo.setInteractive()
         logo.on('pointerdown', () => {
-        this.scene.start('mapTest')
+            this.scene.start('mapManager',{key:"testMap"})
         })
 
         this.tweens.add({
