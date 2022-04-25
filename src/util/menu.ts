@@ -2,22 +2,18 @@ import * as Phaser from "phaser";
 import { GameConfig } from "../config";
 import eventCenter from "./eventCenter";
 
-enum T_STATE {
-    Talking,
-    End,
-    Next
-}
-
 export class TalkingWindow extends Phaser.Scene{
     
     private lowerRect : Phaser.GameObjects.Rectangle
     private nameRect : Phaser.GameObjects.Rectangle
     private dialogue : Phaser.GameObjects.Text
     private dialogueString : string
+    private dialogueArr : string[]
     private name : Phaser.GameObjects.Text
     private nameString : string
     private fontStyle: Phaser.Types.GameObjects.Text.TextStyle = { color: 'white', fontSize: '20px' }
-    private t_state : T_STATE
+    private count : number
+    private timerEvent : Phaser.Time.TimerEvent
 
     constructor(){
         super(GameConfig);
@@ -33,6 +29,8 @@ export class TalkingWindow extends Phaser.Scene{
     init(data: { name: string; txt: string; }){
         this.nameString = data.name
         this.dialogueString = data.txt
+        this.dialogueArr = this.dialogueString.split("\n")
+        this.count = 0
     }
 
     preload(){
@@ -48,49 +46,82 @@ export class TalkingWindow extends Phaser.Scene{
 
         this.name = this.add.text(100,480,this.nameString,this.fontStyle).setOrigin(0.5)
         this.dialogue = this.add.text(60, 525, '',this.fontStyle).setMaxLines(2)
-        this.typewriteText(this.dialogueString)
-        
+
+        eventCenter.on("count-up", () => this.count++, this)
+        eventCenter.on("skip", this.displayText, this)
+        eventCenter.on("next", this.typewriteText, this)
+        eventCenter.on("end",()=>{
+            this.time.removeAllEvents()
+            this.scene.resume('map')
+            this.scene.setVisible(false, 'talkingWindow')
+            this.scene.setActive(false, 'talkingWindow')
+        }, this)
+
+        this.events.on(Phaser.Scenes.Events.SHUTDOWN,()=>{
+            eventCenter.off("count-up")
+            eventCenter.off("skip")
+            eventCenter.off("next")
+            eventCenter.off("end")
+        })
+
+        this.typewriteText(this.dialogueArr[0])
     }
 
     update(){
-        //これは仮
-        const z = this.input.keyboard.addKey('Z');
-        if(Phaser.Input.Keyboard.JustDown(z)){
-            if(this.t_state == T_STATE.End){
-                this.scene.resume('map')
-                this.scene.setVisible(false, 'talkingWindow')
-                this.scene.setActive(false, 'talkingWindow')
-            }
-            if(this.t_state == T_STATE.Talking){
-                this.displayText(this.dialogueString)
-            }
-        }
+        this.talkHandler()
     }
 
     typewriteText(txt : string){
-        this.t_state = T_STATE.Talking
         const length = txt.length
         let i = 0
-        this.time.addEvent({
+        this.timerEvent = this.time.addEvent({
             callback: () => {
                 this.dialogue.text += txt[i]
                 ++i
                 if(i == length){
-                    this.t_state = T_STATE.End
+                    eventCenter.emit("count-up")
                 }
             },
             repeat: length - 1,
-            delay: 50
+            delay: 50,
         })
     }
     displayText(txt : string){
-        this.t_state = T_STATE.End
+        this.time.removeAllEvents()
+        //this.timerEvent.remove()
         this.dialogue.text = txt
+        eventCenter.emit("count-up")
     }
-    setNameAndDialogue(name:string,txt:string){
-        this.nameString = name
-        this.dialogueString = txt
+    talkHandler(){
+        const z = this.input.keyboard.addKey('Z');
+        if(this.timerEvent.getRemaining()==0){
+            //this.timerEvent.remove()
+            this.time.removeAllEvents()
+            if(this.count < this.dialogueArr.length){
+                if(this.count > 1){
+                    if(this.count % 2 == 0){
+                        if(Phaser.Input.Keyboard.JustDown(z)){
+                            console.log("next",this.count)
+                            this.dialogue.text = this.dialogueArr[this.count-1]
+                            eventCenter.emit("next","\n"+this.dialogueArr[this.count])
+                        }
+                    }
+                    else{
+                        this.dialogue.text = this.dialogueArr[this.count-1]
+                        eventCenter.emit("next","\n"+this.dialogueArr[this.count])
+                    }
+                }
+                else {
+                    eventCenter.emit("next","\n"+this.dialogueArr[this.count])
+                }
+            }
+            else {
+                if(Phaser.Input.Keyboard.JustDown(z))
+                    eventCenter.emit("end")
+            }
+        }
     }
+
 }
 
 export class MapMenu extends Phaser.Scene{

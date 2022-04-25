@@ -205,7 +205,7 @@ export class DungeonMap extends Phaser.Scene {
     }
     getDialogue(key:string){
         switch(key){
-            case "npc": return "This is a test dialogue.\nこれはにほんごです。\nThis is line 3."
+            case "npc": return "This is a test dialogue.\nこれはにほんごです。\nThis is line 3.\n4ぎょうめです。\n5ぎょうめですよ。"
         }
     }
 }

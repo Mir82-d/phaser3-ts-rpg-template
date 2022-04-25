@@ -11,9 +11,6 @@ export class MapManager extends Phaser.Scene{
     }
 
     create(){
-        eventCenter.on("loadMap",(key: string)=>{
-            this.mapKey = key
-        })
         this.loadMap()
     }
 
