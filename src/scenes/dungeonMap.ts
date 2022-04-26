@@ -15,11 +15,7 @@ export class DungeonMap extends Phaser.Scene {
     private startPos: Position
     private settingID: string
 
-    //stored position
-    private player_p = new Map<string,number>();
-    private ally_p = new Map<string,number>();
-    private ally2_p = new Map<string,number>();
-    private ally3_p = new Map<string,number>();
+    private registeredNPC : string[]
 
     init(data: { tilesetLocation: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; settingID: string}){
         this.tilesetLocation = data.tilesetLocation
@@ -100,22 +96,8 @@ export class DungeonMap extends Phaser.Scene {
         this.gridEngine.setPosition("ally",this.startPos,"playerField");
         this.gridEngine.setPosition("ally2",this.startPos,"playerField");
         this.gridEngine.setPosition("ally3",this.startPos,"playerField");
-        //PositionObserver
-        this.gridEngine.positionChangeFinished()
-            .subscribe(({charId,enterTile})=>{
-                if(charId == "player"){
-                    this.player_p.set("x",enterTile.x);
-                    this.player_p.set("y",enterTile.y);
-                }
-                if(charId == "ally"){
-                    this.ally_p.set("x",enterTile.x);
-                    this.ally_p.set("y",enterTile.y);
-                }
-                if(charId == "ally2"){
-                    this.ally2_p.set("x",enterTile.x);
-                    this.ally2_p.set("y",enterTile.y);
-                }
-        });
+        
+        this.registeredNPC = this.gridEngine.getAllCharacters().slice(4,)
     }
     update() {
         const cursors = this.input.keyboard.createCursorKeys();
@@ -123,10 +105,8 @@ export class DungeonMap extends Phaser.Scene {
             this.gridEngine.move("player", Direction.LEFT); 
         } else if (cursors.right.isDown) {
             this.gridEngine.move("player", Direction.RIGHT);
-            
         } else if (cursors.up.isDown) {
             this.gridEngine.move("player", Direction.UP);
-            
         } else if (cursors.down.isDown) {
             this.gridEngine.move("player", Direction.DOWN);
         }
@@ -134,9 +114,9 @@ export class DungeonMap extends Phaser.Scene {
         const x = this.input.keyboard.addKey('X');
         //following to player
         if(this.gridEngine.isMoving("player")){
-            this.gridEngine.moveTo("ally",{x: this.player_p.get("x"),y: this.player_p.get("y")});
-            this.gridEngine.moveTo("ally2",{x: this.ally_p.get("x"),y: this.ally_p.get("y")});
-            this.gridEngine.moveTo("ally3",{x: this.ally2_p.get("x"),y: this.ally2_p.get("y")});
+            this.gridEngine.moveTo("ally",this.gridEngine.getPosition("player"));
+            this.gridEngine.moveTo("ally2",this.gridEngine.getPosition("ally"));
+            this.gridEngine.moveTo("ally3",this.gridEngine.getPosition("ally2"));
         }
         //仮
         if(this.gridEngine.getPosition("npc").x==this.gridEngine.getFacingPosition("player").x
@@ -190,7 +170,7 @@ export class DungeonMap extends Phaser.Scene {
     settingNPCMovement(){
         switch(this.settingID){
             case "testMap":{
-                this.gridEngine.moveRandomly("npc",1500);
+                this.gridEngine.moveRandomly("npc",this.getRandomInt(1000,2000));
             }
             default:
                 break
@@ -206,6 +186,8 @@ export class DungeonMap extends Phaser.Scene {
     getDialogue(key:string){
         switch(key){
             case "npc": return "This is a test dialogue.\nこれはにほんごです。\nThis is line 3.\n4ぎょうめです。\n5ぎょうめですよ。"
+            default:
+                break
         }
     }
 }

@@ -48,7 +48,7 @@ export class TalkingWindow extends Phaser.Scene{
         this.dialogue = this.add.text(60, 525, '',this.fontStyle).setMaxLines(2)
 
         eventCenter.on("count-up", () => this.count++, this)
-        eventCenter.on("skip", this.displayText, this)
+        //eventCenter.on("skip", this.displayText, this)
         eventCenter.on("next", this.typewriteText, this)
         eventCenter.on("end",()=>{
             this.time.removeAllEvents()
@@ -59,7 +59,7 @@ export class TalkingWindow extends Phaser.Scene{
 
         this.events.on(Phaser.Scenes.Events.SHUTDOWN,()=>{
             eventCenter.off("count-up")
-            eventCenter.off("skip")
+            //eventCenter.off("skip")
             eventCenter.off("next")
             eventCenter.off("end")
         })
@@ -83,7 +83,7 @@ export class TalkingWindow extends Phaser.Scene{
                 }
             },
             repeat: length - 1,
-            delay: 50,
+            delay: 40,
         })
     }
     displayText(txt : string){
