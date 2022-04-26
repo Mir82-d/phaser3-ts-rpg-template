@@ -96,13 +96,20 @@ export class DungeonMap extends Phaser.Scene {
         this.gridEngine.setPosition("ally",this.startPos,"playerField");
         this.gridEngine.setPosition("ally2",this.startPos,"playerField");
         this.gridEngine.setPosition("ally3",this.startPos,"playerField");
-        
+        //events
+        eventCenter.on("reset-facing-direction",(npcKey : string)=>{
+            this.time.delayedCall(1200,()=>{
+                if(this.gridEngine.isMoving(npcKey)==false)
+                this.gridEngine.turnTowards(npcKey,Direction.DOWN)
+            })
+        },this)
+        //仮
         this.registeredNPC = this.gridEngine.getAllCharacters().slice(4,)
     }
     update() {
         const cursors = this.input.keyboard.createCursorKeys();
         if (cursors.left.isDown) {
-            this.gridEngine.move("player", Direction.LEFT); 
+            this.gridEngine.move("player", Direction.LEFT);
         } else if (cursors.right.isDown) {
             this.gridEngine.move("player", Direction.RIGHT);
         } else if (cursors.up.isDown) {
@@ -118,15 +125,18 @@ export class DungeonMap extends Phaser.Scene {
             this.gridEngine.moveTo("ally2",this.gridEngine.getPosition("ally"));
             this.gridEngine.moveTo("ally3",this.gridEngine.getPosition("ally2"));
         }
-        //仮
-        if(this.gridEngine.getPosition("npc").x==this.gridEngine.getFacingPosition("player").x
-        && this.gridEngine.getPosition("npc").y==this.gridEngine.getFacingPosition("player").y){
-            if(Phaser.Input.Keyboard.JustDown(z)){
-                console.log("talking");
-                this.gridEngine.turnTowards("npc",this.reverseDirection(this.gridEngine.getFacingDirection("player")));
-                this.scene.launch('talkingWindow',{ name: this.getName("npc"), txt: this.getDialogue("npc")})
-                this.scene.pause();
-            }
+        //talk to npc
+        if(Phaser.Input.Keyboard.JustDown(z)){
+            this.registeredNPC.forEach( npcKey =>{
+                if(this.gridEngine.getPosition(npcKey).x==this.gridEngine.getFacingPosition("player").x
+                && this.gridEngine.getPosition(npcKey).y==this.gridEngine.getFacingPosition("player").y)
+                {
+                    this.gridEngine.turnTowards(npcKey,this.reverseDirection(this.gridEngine.getFacingDirection("player")));
+                    eventCenter.emit("reset-facing-direction",npcKey)
+                    this.scene.launch('talkingWindow',{ name: this.getName(npcKey), txt: this.getDialogue(npcKey)})
+                    this.scene.pause();
+                } 
+            })
         }
     }
     getRandomInt(min: number, max: number) {
@@ -148,6 +158,9 @@ export class DungeonMap extends Phaser.Scene {
             return Direction.LEFT;
         }
     }
+    spawnEnemy(){
+
+    }
     //npc settings
     settingNPC(){
         switch(this.settingID){
@@ -160,6 +173,16 @@ export class DungeonMap extends Phaser.Scene {
                     sprite: npcSpr,
                     walkingAnimationMapping: this.getRandomInt(0,7),
                     startPosition: {x: 7,y: 7},
+                    charLayer: "playerField",
+                });
+                //
+                const npcSpr2 = this.add.sprite(0,0,"player");
+                npcSpr2.scale = 1.5;
+                this.gridEngineConfig.characters.push({
+                    id: "npc2",
+                    sprite: npcSpr2,
+                    walkingAnimationMapping: 7,
+                    startPosition: {x: 10,y: 5},
                     charLayer: "playerField",
                 });
             }
@@ -186,6 +209,7 @@ export class DungeonMap extends Phaser.Scene {
     getDialogue(key:string){
         switch(key){
             case "npc": return "This is a test dialogue.\nこれはにほんごです。\nThis is line 3.\n4ぎょうめです。\n5ぎょうめですよ。"
+            case "npc2": return "うごかないやつです。"
             default:
                 break
         }
