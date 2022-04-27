@@ -101,7 +101,6 @@ export class TalkingWindow extends Phaser.Scene{
                 if(this.count > 1){
                     if(this.count % 2 == 0){
                         if(Phaser.Input.Keyboard.JustDown(z)){
-                            console.log("next",this.count)
                             this.dialogue.text = this.dialogueArr[this.count-1]
                             eventCenter.emit("next","\n"+this.dialogueArr[this.count])
                         }
@@ -117,7 +116,7 @@ export class TalkingWindow extends Phaser.Scene{
             }
             else {
                 if(Phaser.Input.Keyboard.JustDown(z))
-                    eventCenter.emit("end")
+                eventCenter.emit("end")
             }
         }
     }

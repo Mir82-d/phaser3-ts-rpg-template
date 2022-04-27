@@ -28,7 +28,7 @@ export class MapManager extends Phaser.Scene{
                     jsonKey:"test-dungeon-map",
                     jsonLocation:"assets/json/test_map.json",
                     mapName:"Test Dungeon",
-                    startPos:{x: 10,y:16},
+                    startPos:{x: 10,y: 16},
                     settingID:"testMap",
                 }
             }
@@ -39,7 +39,7 @@ export class MapManager extends Phaser.Scene{
                     jsonKey:"",
                     jsonLocation:"",
                     mapName:"",
-                    startPos:{x: 0,y:0},
+                    startPos:{x: 0,y: 0},
                     settingID:"",
                 }
             }

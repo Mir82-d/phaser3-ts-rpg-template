@@ -15,7 +15,7 @@ export class DungeonMap extends Phaser.Scene {
     private startPos: Position
     private settingID: string
 
-    private registeredNPC : string[]
+    private registeredNPC: string[] = new Array()
 
     init(data: { tilesetLocation: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; settingID: string}){
         this.tilesetLocation = data.tilesetLocation
@@ -103,8 +103,10 @@ export class DungeonMap extends Phaser.Scene {
                 this.gridEngine.turnTowards(npcKey,Direction.DOWN)
             })
         },this)
-        //仮
-        this.registeredNPC = this.gridEngine.getAllCharacters().slice(4,)
+        //register npc
+        this.gridEngine.getAllCharacters().forEach(charID=>{
+            if(charID.includes("npc")) this.registeredNPC.push(charID)
+        })
     }
     update() {
         const cursors = this.input.keyboard.createCursorKeys();
@@ -161,7 +163,7 @@ export class DungeonMap extends Phaser.Scene {
     spawnEnemy(){
 
     }
-    //npc settings
+    //npc settings(npc id must be included "npc" letter)
     settingNPC(){
         switch(this.settingID){
             case "testMap":{
