@@ -17,7 +17,7 @@ export class GameTest extends Phaser.Scene {
 
         logo.setInteractive()
         logo.on('pointerdown', () => {
-            this.scene.start('mapManager',{key:"testMap"})
+            this.scene.start('mapManager',{key:"testMap",pos:{x: 10,y: 16}})
         })
 
         this.tweens.add({

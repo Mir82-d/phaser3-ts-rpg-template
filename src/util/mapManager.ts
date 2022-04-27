@@ -1,17 +1,25 @@
+import { Position } from "grid-engine";
 import * as Phaser from "phaser";
 import { DungeonMap } from "../scenes/dungeonMap";
 import eventCenter from "../util/eventCenter";
 
 export class MapManager extends Phaser.Scene{
 
-    private mapKey : string
+    private mapKey: string
+    private startPosition: Position
 
-    init(data: { key: string; }){
+    init(data: { key: string; pos: Position}){
         this.mapKey = data.key
+        this.startPosition = data.pos
     }
 
     create(){
         this.loadMap()
+        eventCenter.on("load-map",(mapKey:string,pos:Position)=>{
+            this.mapKey = mapKey
+            this.startPosition = pos
+            this.scene.launch("map",this.getDataInfo())
+        })
     }
 
     loadMap(){
@@ -28,7 +36,7 @@ export class MapManager extends Phaser.Scene{
                     jsonKey:"test-dungeon-map",
                     jsonLocation:"assets/json/test_map.json",
                     mapName:"Test Dungeon",
-                    startPos:{x: 10,y: 16},
+                    startPos:this.startPosition,
                     settingID:"testMap",
                 }
             }

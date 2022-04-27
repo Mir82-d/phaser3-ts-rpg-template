@@ -16,6 +16,7 @@ export class DungeonMap extends Phaser.Scene {
     private settingID: string
 
     private registeredNPC: string[] = new Array()
+    private dialogueDatabase: Phaser.Cache.BaseCache
 
     init(data: { tilesetLocation: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; settingID: string}){
         this.tilesetLocation = data.tilesetLocation
@@ -33,6 +34,7 @@ export class DungeonMap extends Phaser.Scene {
             frameWidth: 52,
             frameHeight: 72,
         });
+        this.load.xml("dialogue","assets/xml/dialogue.xml")
     }
     create() {
         const tilemap = this.make.tilemap({ key: this.jsonKey });
@@ -107,6 +109,8 @@ export class DungeonMap extends Phaser.Scene {
         this.gridEngine.getAllCharacters().forEach(charID=>{
             if(charID.includes("npc")) this.registeredNPC.push(charID)
         })
+        //load dialogue
+        this.dialogueDatabase = this.cache.xml.get("dialogue")
     }
     update() {
         const cursors = this.input.keyboard.createCursorKeys();
@@ -140,6 +144,7 @@ export class DungeonMap extends Phaser.Scene {
                 } 
             })
         }
+        this.mapTransition()
     }
     getRandomInt(min: number, max: number) {
         min = Math.ceil(min);
@@ -159,6 +164,14 @@ export class DungeonMap extends Phaser.Scene {
         else if(dire == Direction.RIGHT){
             return Direction.LEFT;
         }
+    }
+    isFacing(pos: Position){
+        if(this.gridEngine.isMoving("player")==false){
+            if(pos.x == this.gridEngine.getPosition("player").x
+            && pos.y == this.gridEngine.getPosition("player").y)
+            return true
+        }
+        else return false
     }
     spawnEnemy(){
 
@@ -196,6 +209,19 @@ export class DungeonMap extends Phaser.Scene {
         switch(this.settingID){
             case "testMap":{
                 this.gridEngine.moveRandomly("npc",this.getRandomInt(1000,2000));
+            }
+            default:
+                break
+        }
+    }
+    //setting area transition point
+    mapTransition(){
+        switch(this.settingID){
+            case "testMap":{
+                if(this.isFacing({x: 14,y: 5}))
+                {
+                    eventCenter.emit("load-map","testMap",{x: 10,y: 18})
+                }
             }
             default:
                 break
