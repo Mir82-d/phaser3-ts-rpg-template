@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 import { GameConfig } from "../config";
-import eventCenter from "./eventCenter";
+import eventCenter from "./EventCenter";
 
 export class TalkingWindow extends Phaser.Scene{
     
@@ -120,13 +120,5 @@ export class TalkingWindow extends Phaser.Scene{
             }
         }
     }
-
-}
-
-export class MapMenu extends Phaser.Scene{
-    
-}
-
-export class BattleMenu extends Phaser.Scene{
 
 }

@@ -1,6 +1,6 @@
 import { GridEngine, Position } from "grid-engine";
 import { Direction } from "grid-engine";
-import eventCenter from "../util/eventCenter";
+import eventCenter from "../util/EventCenter";
 import * as Phaser from "phaser";
 
 export class DungeonMap extends Phaser.Scene {

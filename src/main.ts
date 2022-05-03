@@ -1,10 +1,10 @@
 import * as Phaser from "phaser";
 import { GameConfig } from './config';
-import { Start } from "./scenes/start";
-import { GameTest } from "./scenes/gameTest";
-import { DungeonMap } from "./scenes/dungeonMap";
-import { TalkingWindow } from "./util/menu";
-import { MapManager } from "./util/mapManager";
+import { Start } from "./scenes/Start";
+import { GameTest } from "./scenes/GameTest";
+import { DungeonMap } from "./scenes/DungeonMap";
+import { TalkingWindow } from "./util/TalkingWindow";
+import { MapManager } from "./util/MapManager";
 
 // Phaser3のゲームクラスの記述（Phaser.Gameクラスを継承したGameクラスの記述）
 export class Game extends Phaser.Game {
