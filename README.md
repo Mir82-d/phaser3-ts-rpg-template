@@ -26,4 +26,5 @@ yarn run dev
 
 ## Dev tools
 - [Tiled Map Editor](https://thorbjorn.itch.io/tiled?ac=MbLnMaiNXvG)
+- [Phaser Editor 2d](https://phasereditor2d.com/)
 - ...

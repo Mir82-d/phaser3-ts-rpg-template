@@ -1067,9 +1067,9 @@ graceful-fs@^4.1.2, graceful-fs@^4.2.4, graceful-fs@^4.2.6, graceful-fs@^4.2.9:
   integrity sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==
 
 grid-engine@^2.13.3:
-  version "2.13.3"
-  resolved "https://registry.yarnpkg.com/grid-engine/-/grid-engine-2.13.3.tgz#1b48ac944ea851a0a3b142e933faafb7a79fd0e1"
-  integrity sha512-RunvhoQugRDXlAfUq9FNzDneeTDLl8Tcp67/jb+prQo1hWlTn5zaKV2xYDu+WdHslWVZ2CBaXYTNS7Xh8Fic7w==
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/grid-engine/-/grid-engine-2.16.0.tgz#4c67ad83a28b287a5ca4375a3f2540b872917858"
+  integrity sha512-TdoqT1DTIGx0wTXouxRjIQWPs0dd5RGxO4TPJf5GT3fCzyPIBXhh25ZEX9NOoTm7+nJHgUjYt1PhIbPjdVo2eg==
   dependencies:
     rxjs "^7.3.1"
 
@@ -2163,9 +2163,9 @@ ts-loader@9.2.8:
     semver "^7.3.4"
 
 tslib@^2.1.0:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
-  integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
+  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
 
 type-is@~1.6.18:
   version "1.6.18"

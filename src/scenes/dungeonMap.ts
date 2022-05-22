@@ -105,10 +105,6 @@ export class DungeonMap extends Phaser.Scene {
                 this.gridEngine.turnTowards(npcKey,Direction.DOWN)
             })
         },this)
-        //register npc
-        this.gridEngine.getAllCharacters().forEach(charID=>{
-            if(charID.includes("npc")) this.registeredNPC.push(charID)
-        })
         //load dialogue
         this.dialogueDatabase = this.cache.xml.get("dialogue")
     }
@@ -133,15 +129,13 @@ export class DungeonMap extends Phaser.Scene {
         }
         //talk to npc
         if(Phaser.Input.Keyboard.JustDown(z)){
-            this.registeredNPC.forEach( npcKey =>{
-                if(this.gridEngine.getPosition(npcKey).x==this.gridEngine.getFacingPosition("player").x
-                && this.gridEngine.getPosition(npcKey).y==this.gridEngine.getFacingPosition("player").y)
-                {
-                    this.gridEngine.turnTowards(npcKey,this.reverseDirection(this.gridEngine.getFacingDirection("player")));
-                    eventCenter.emit("reset-facing-direction",npcKey)
-                    this.scene.launch('talkingWindow',{ name: this.getName(npcKey), txt: this.getDialogue(npcKey)})
+            this.gridEngine.getCharactersAt(this.gridEngine.getFacingPosition("player"),"playerField").forEach( charID =>{
+                if(charID.includes("npc")){
+                    this.gridEngine.turnTowards(charID,this.reverseDirection(this.gridEngine.getFacingDirection("player")));
+                    eventCenter.emit("reset-facing-direction",charID)
+                    this.scene.launch('talkingWindow',{ name: this.getName(charID), txt: this.getDialogue(charID)})
                     this.scene.pause();
-                } 
+                }
             })
         }
         this.mapTransition()

@@ -2,9 +2,9 @@ import * as Phaser from "phaser";
 import { GameConfig } from './config';
 import { Start } from "./scenes/Start";
 import { GameTest } from "./scenes/GameTest";
-import { DungeonMap } from "./scenes/DungeonMap";
 import { TalkingWindow } from "./util/TalkingWindow";
 import { MapManager } from "./util/MapManager";
+import TitleMenu from "./scenes/TitleMenu";
 
 // Phaser3のゲームクラスの記述（Phaser.Gameクラスを継承したGameクラスの記述）
 export class Game extends Phaser.Game {
@@ -16,13 +16,14 @@ export class Game extends Phaser.Game {
         this.scene.add("start", Start, false);
         this.scene.add("gameTest", GameTest, false);
         this.scene.add("mapManager",MapManager,false)
+        this.scene.add("titleMenu",TitleMenu,false)
         //this.scene.add("map", MapTest, false);
 
         //util
         this.scene.add("talkingWindow",TalkingWindow,false);
 
         // シーンをスタート
-        this.scene.start("start");
+        this.scene.start("titleMenu");
     }
 }
 

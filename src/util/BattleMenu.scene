@@ -1,0 +1,173 @@
+{
+    "id": "ffb65e35-9557-4285-aa68-4d23203d7cab",
+    "sceneType": "SCENE",
+    "settings": {
+        "snapWidth": 800,
+        "snapHeight": 600,
+        "exportClass": true,
+        "preloadPackFiles": [],
+        "sceneKey": "BattleMenu",
+        "compilerOutputLanguage": "TYPE_SCRIPT"
+    },
+    "displayList": [
+        {
+            "type": "Rectangle",
+            "id": "02a02a10-fcc2-45e6-b713-142be3b82a09",
+            "label": "status_ally1",
+            "components": [],
+            "x": 151,
+            "y": 483,
+            "isFilled": true,
+            "fillColor": "#000000",
+            "isStroked": true,
+            "width": 128,
+            "height": 150
+        },
+        {
+            "type": "Rectangle",
+            "id": "72c8ae29-71c9-428b-8ec8-ea98572e3e3e",
+            "label": "status_ally2",
+            "components": [],
+            "x": 325,
+            "y": 483,
+            "isFilled": true,
+            "fillColor": "#000000",
+            "isStroked": true,
+            "width": 128,
+            "height": 150
+        },
+        {
+            "type": "Rectangle",
+            "id": "277c40f2-7520-486c-949d-a7be1163d21f",
+            "label": "status_ally3",
+            "components": [],
+            "x": 503,
+            "y": 483,
+            "isFilled": true,
+            "fillColor": "#000000",
+            "isStroked": true,
+            "width": 128,
+            "height": 150
+        },
+        {
+            "type": "Rectangle",
+            "id": "4b621c8c-29cf-4c4c-9a07-c4279bc21aab",
+            "label": "status_ally4",
+            "components": [],
+            "x": 670,
+            "y": 483,
+            "isFilled": true,
+            "fillColor": "#000000",
+            "isStroked": true,
+            "width": 128,
+            "height": 150
+        },
+        {
+            "type": "Layer",
+            "id": "e11fb7ce-9b9f-4956-801d-721ba77197c0",
+            "label": "layer_1",
+            "scope": "CLASS",
+            "components": [],
+            "list": [
+                {
+                    "type": "Rectangle",
+                    "id": "a2cbfd31-4996-4d4c-9db5-c5079f078125",
+                    "label": "selectRectangle",
+                    "scope": "CLASS",
+                    "components": [],
+                    "x": 230,
+                    "y": 121,
+                    "isFilled": true,
+                    "fillColor": "#030000",
+                    "isStroked": true,
+                    "width": 320,
+                    "height": 128
+                },
+                {
+                    "type": "Text",
+                    "id": "e6eac4ad-3c6c-4077-b89c-0f903098b2ba",
+                    "label": "fight",
+                    "scope": "CLASS",
+                    "components": [],
+                    "x": 129,
+                    "y": 90,
+                    "text": "たたかう",
+                    "fontSize": "20px"
+                },
+                {
+                    "type": "Text",
+                    "id": "13f0df78-8448-4b75-811a-c064de0bd434",
+                    "label": "magic",
+                    "scope": "CLASS",
+                    "components": [],
+                    "x": 129,
+                    "y": 131,
+                    "text": "まほう",
+                    "fontSize": "20px"
+                },
+                {
+                    "type": "Text",
+                    "id": "f7d1448d-c2c0-408c-b492-947579842e13",
+                    "label": "guard",
+                    "scope": "CLASS",
+                    "components": [],
+                    "x": 256,
+                    "y": 90,
+                    "text": "ガード",
+                    "fontSize": "20px"
+                },
+                {
+                    "type": "Text",
+                    "id": "f2879ac4-c210-4607-bcf3-1b9012cd0c98",
+                    "label": "text",
+                    "scope": "CLASS",
+                    "components": [],
+                    "x": 256,
+                    "y": 131,
+                    "text": "にげる",
+                    "fontSize": "20px"
+                }
+            ]
+        },
+        {
+            "type": "Rectangle",
+            "id": "a4e4f792-7afa-4db7-b0d2-777850341a65",
+            "label": "eventLogWindow",
+            "components": [],
+            "x": 399,
+            "y": 121,
+            "isFilled": true,
+            "fillColor": "#000000",
+            "isStroked": true,
+            "width": 500,
+            "height": 128
+        },
+        {
+            "type": "Text",
+            "id": "c3f1d1f9-8aed-421f-bca8-a0445726be35",
+            "label": "eventLog",
+            "components": [],
+            "x": 179,
+            "y": 85,
+            "text": "New text",
+            "fontSize": "20px",
+            "maxLines": 2,
+            "wordWrapWidth": 410
+        },
+        {
+            "type": "Layer",
+            "id": "2075ed8c-8c6a-456f-9158-8a9832a836d5",
+            "label": "layer_2",
+            "scope": "CLASS",
+            "components": [],
+            "list": []
+        }
+    ],
+    "plainObjects": [],
+    "meta": {
+        "app": "Phaser Editor 2D - Scene Editor",
+        "url": "https://phasereditor2d.com",
+        "contentType": "phasereditor2d.core.scene.SceneContentType",
+        "version": 3
+    }
+}
