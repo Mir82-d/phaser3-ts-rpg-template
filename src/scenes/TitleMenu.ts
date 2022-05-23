@@ -59,7 +59,7 @@ export default class TitleMenu extends Phaser.Scene {
 
         playButton.on('selected', () => {
             playButton.setFrame('buttonLong_blue.png')
-            this.scene.start('mapManager',{key:"testMap",pos:{x: 10,y: 16}})
+            this.scene.start('mapManager',{key:"testMap",pos:{x: 15,y: 21}})
         })
         settingButton.on('selected', () => {
             settingButton.setFrame('buttonLong_blue.png')

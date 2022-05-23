@@ -14,36 +14,54 @@ export class MapManager extends Phaser.Scene{
     }
 
     create(){
+        //for the first time
         this.loadMap()
-        eventCenter.on("load-map",(mapKey:string,pos:Position)=>{
+        /* eventCenter.on("load-map",(mapKey:string,pos:Position)=>{
             this.mapKey = mapKey
             this.startPosition = pos
-            this.scene.launch("map",this.getDataInfo())
-        })
+            //this.scene.pause("map")
+            //If u don't do delayedCall, this would never work.
+            this.time.delayedCall(300,()=>{
+                this.scene.launch("map",this.getDataInfo(mapKey,pos))
+            })
+        }) */
     }
 
     loadMap(){
         this.scene.remove("map")
         this.scene.add("map", DungeonMap, false);
-        this.scene.launch("map",this.getDataInfo())
+        this.scene.launch("map",this.getDataInfo(this.mapKey,this.startPosition))
     }
 
-    getDataInfo(){
-        switch(this.mapKey){
+    getDataInfo(mapKey: string,startPosition: Position){
+        switch(mapKey){
             case "testMap":{
                 return {
                     tilesetLocation:"assets/img/test-dungeon-tileset.png",
+                    tileKey:"tile1",
                     jsonKey:"test-dungeon-map",
                     jsonLocation:"assets/json/test_map.json",
                     mapName:"Test Dungeon",
-                    startPos:this.startPosition,
+                    startPos:startPosition,
                     settingID:"testMap",
+                }
+            }
+            case "testMap2":{
+                return {
+                    tilesetLocation:"assets/img/test-dungeon-tileset.png",
+                    tileKey:"tile2",
+                    jsonKey:"test-dungeon-map2",
+                    jsonLocation:"assets/json/test_map2.json",
+                    mapName:"Test Dungeon 2",
+                    startPos:startPosition,
+                    settingID:"testMap2",
                 }
             }
             //追加していく
             case "":{
                 return {
                     tilesetLocation:"",
+                    tileKey:"",
                     jsonKey:"",
                     jsonLocation:"",
                     mapName:"",

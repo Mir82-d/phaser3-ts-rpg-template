@@ -2,6 +2,8 @@ import { GridEngine, Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import eventCenter from "../util/EventCenter";
 import * as Phaser from "phaser";
+import { MapManager } from "../util/MapManager";
+import { GameConfig } from "../config";
 
 export class DungeonMap extends Phaser.Scene {
 
@@ -9,26 +11,30 @@ export class DungeonMap extends Phaser.Scene {
     private gridEngineConfig: any
 
     private tilesetLocation: string
+    private tileKey: string
     private jsonKey: string
     private jsonLocation: string
     private mapName: string
     private startPos: Position
     private settingID: string
 
-    private registeredNPC: string[] = new Array()
     private dialogueDatabase: Phaser.Cache.BaseCache
+    private mapManager: MapManager
 
-    init(data: { tilesetLocation: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; settingID: string}){
+    init(data: { tilesetLocation: string; tileKey: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; settingID: string}){
         this.tilesetLocation = data.tilesetLocation
+        this.tileKey = data.tileKey
         this.jsonKey = data.jsonKey
         this.jsonLocation = data.jsonLocation
         this.mapName = data.mapName
         this.startPos = data.startPos
         this.settingID = data.settingID
+
+        this.mapManager = new MapManager(GameConfig)
     }
 
     preload() {
-        this.load.image("tile1", this.tilesetLocation);
+        this.load.image(this.tileKey, this.tilesetLocation);
         this.load.tilemapTiledJSON(this.jsonKey, this.jsonLocation);
         this.load.spritesheet("player", "assets/img/characters.png", {
             frameWidth: 52,
@@ -38,7 +44,7 @@ export class DungeonMap extends Phaser.Scene {
     }
     create() {
         const tilemap = this.make.tilemap({ key: this.jsonKey });
-        tilemap.addTilesetImage(this.mapName, "tile1");
+        tilemap.addTilesetImage(this.mapName, this.tileKey);
         for (let i = 0; i < tilemap.layers.length; i++) {
             const layer = tilemap.createLayer(i, this.mapName, 0, 0);
             layer.scale = 3;
@@ -46,9 +52,13 @@ export class DungeonMap extends Phaser.Scene {
         const playerSprite = this.add.sprite(0, 0, "player");
         playerSprite.scale = 1.5;
         
-        this.cameras.main.startFollow(playerSprite, true);
-        this.cameras.main.setFollowOffset(-playerSprite.width, -playerSprite.height);
-
+        const camera = this.cameras.main
+        camera.startFollow(playerSprite, true);
+        camera.setFollowOffset(-playerSprite.width, -playerSprite.height);
+        camera.setBounds(0, 0,
+            tilemap.widthInPixels*3,
+            tilemap.heightInPixels*3)
+        
         //Ally
         const alySpr = this.add.sprite(0, 0, "player").setScale(1.5);
         const alySpr2 = this.add.sprite(0, 0, "player").setScale(1.5);
@@ -60,14 +70,14 @@ export class DungeonMap extends Phaser.Scene {
                     id: "player",
                     sprite: playerSprite,
                     walkingAnimationMapping: 6,
-                    startPosition: {x: 0,y:0},
+                    startPosition:this.startPos,
                     charLayer: "playerField",
                 },
                 {
                     id: "ally",
                     sprite: alySpr,
                     walkingAnimationMapping: 1,
-                    startPosition: {x: 0,y:0},
+                    startPosition:this.startPos,
                     charLayer: "playerField",
                     collides: false,
                 },
@@ -75,7 +85,7 @@ export class DungeonMap extends Phaser.Scene {
                     id: "ally2",
                     sprite: alySpr2,
                     walkingAnimationMapping: 2,
-                    startPosition: {x: 0,y:0},
+                    startPosition:this.startPos,
                     charLayer: "playerField",
                     collides: false,
                 },
@@ -83,7 +93,7 @@ export class DungeonMap extends Phaser.Scene {
                     id: "ally3",
                     sprite: alySpr3,
                     walkingAnimationMapping: 3,
-                    startPosition: {x: 0,y:0},
+                    startPosition:this.startPos,
                     charLayer: "playerField",
                     collides: false,
                 },
@@ -94,10 +104,10 @@ export class DungeonMap extends Phaser.Scene {
         this.gridEngine.create(tilemap, this.gridEngineConfig);
         this.settingNPCMovement()
         //Set start position for this map
-        this.gridEngine.setPosition("player",this.startPos,"playerField");
+        /* this.gridEngine.setPosition("player",this.startPos,"playerField");
         this.gridEngine.setPosition("ally",this.startPos,"playerField");
         this.gridEngine.setPosition("ally2",this.startPos,"playerField");
-        this.gridEngine.setPosition("ally3",this.startPos,"playerField");
+        this.gridEngine.setPosition("ally3",this.startPos,"playerField"); */
         //events
         eventCenter.on("reset-facing-direction",(npcKey : string)=>{
             this.time.delayedCall(1200,()=>{
@@ -105,6 +115,12 @@ export class DungeonMap extends Phaser.Scene {
                 this.gridEngine.turnTowards(npcKey,Direction.DOWN)
             })
         },this)
+        this.events.once("load-map",(mapKey:string,pos:Position)=>{
+            //If u don't do delayedCall, this would never work.
+            this.time.delayedCall(300,()=>{
+                this.scene.restart(this.mapManager.getDataInfo(mapKey,pos))
+            })
+        })
         //load dialogue
         this.dialogueDatabase = this.cache.xml.get("dialogue")
     }
@@ -181,7 +197,7 @@ export class DungeonMap extends Phaser.Scene {
                     id: "npc",
                     sprite: npcSpr,
                     walkingAnimationMapping: this.getRandomInt(0,7),
-                    startPosition: {x: 7,y: 7},
+                    startPosition: {x: 12,y: 11},
                     charLayer: "playerField",
                 });
                 //
@@ -191,9 +207,12 @@ export class DungeonMap extends Phaser.Scene {
                     id: "npc2",
                     sprite: npcSpr2,
                     walkingAnimationMapping: 7,
-                    startPosition: {x: 10,y: 5},
+                    startPosition: {x: 15,y: 9},
                     charLayer: "playerField",
                 });
+            }
+            case "testMap2":{
+
             }
             default:
                 break
@@ -212,9 +231,16 @@ export class DungeonMap extends Phaser.Scene {
     mapTransition(){
         switch(this.settingID){
             case "testMap":{
-                if(this.isFacing({x: 14,y: 5}))
+                if(this.isFacing({x: 19,y: 9}))
                 {
-                    eventCenter.emit("load-map","testMap",{x: 10,y: 18})
+                    this.events.emit("load-map","testMap2",{x: 14,y: 39})
+                    //eventCenter.emit("load-map","testMap",{x: 15,y: 21})
+                }
+            }
+            case "testMap2":{
+                if(this.isFacing({x: 14,y: 0}))
+                {
+                    this.events.emit("load-map","testMap",{x: 15,y: 21})
                 }
             }
             default:
