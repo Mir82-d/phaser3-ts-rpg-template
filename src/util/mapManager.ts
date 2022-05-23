@@ -1,4 +1,4 @@
-import { Position } from "grid-engine";
+import { Direction, Position } from "grid-engine";
 import * as Phaser from "phaser";
 import { DungeonMap } from "../scenes/DungeonMap";
 import eventCenter from "./EventCenter";
@@ -43,17 +43,19 @@ export class MapManager extends Phaser.Scene{
                     jsonLocation:"assets/json/test_map.json",
                     mapName:"Test Dungeon",
                     startPos:startPosition,
+                    startDire:Direction.UP,
                     settingID:"testMap",
                 }
             }
             case "testMap2":{
                 return {
                     tilesetLocation:"assets/img/test-dungeon-tileset.png",
-                    tileKey:"tile2",
+                    tileKey:"tile1",
                     jsonKey:"test-dungeon-map2",
                     jsonLocation:"assets/json/test_map2.json",
                     mapName:"Test Dungeon 2",
                     startPos:startPosition,
+                    startDire:Direction.UP,
                     settingID:"testMap2",
                 }
             }

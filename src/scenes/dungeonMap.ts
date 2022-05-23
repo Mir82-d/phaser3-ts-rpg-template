@@ -16,18 +16,20 @@ export class DungeonMap extends Phaser.Scene {
     private jsonLocation: string
     private mapName: string
     private startPos: Position
+    private startDire: Direction
     private settingID: string
 
     private dialogueDatabase: Phaser.Cache.BaseCache
     private mapManager: MapManager
 
-    init(data: { tilesetLocation: string; tileKey: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; settingID: string}){
+    init(data: { tilesetLocation: string; tileKey: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; startDire: Direction; settingID: string}){
         this.tilesetLocation = data.tilesetLocation
         this.tileKey = data.tileKey
         this.jsonKey = data.jsonKey
         this.jsonLocation = data.jsonLocation
         this.mapName = data.mapName
         this.startPos = data.startPos
+        this.startDire = data.startDire
         this.settingID = data.settingID
 
         this.mapManager = new MapManager(GameConfig)
@@ -43,6 +45,8 @@ export class DungeonMap extends Phaser.Scene {
         this.load.xml("dialogue","assets/xml/dialogue.xml")
     }
     create() {
+        const FADE_TIME = 600;
+
         const tilemap = this.make.tilemap({ key: this.jsonKey });
         tilemap.addTilesetImage(this.mapName, this.tileKey);
         for (let i = 0; i < tilemap.layers.length; i++) {
@@ -103,11 +107,13 @@ export class DungeonMap extends Phaser.Scene {
         this.settingNPC()
         this.gridEngine.create(tilemap, this.gridEngineConfig);
         this.settingNPCMovement()
-        //Set start position for this map
-        /* this.gridEngine.setPosition("player",this.startPos,"playerField");
-        this.gridEngine.setPosition("ally",this.startPos,"playerField");
-        this.gridEngine.setPosition("ally2",this.startPos,"playerField");
-        this.gridEngine.setPosition("ally3",this.startPos,"playerField"); */
+        //set start direction for this map
+        this.gridEngine.turnTowards("player",this.startDire)
+        this.gridEngine.turnTowards("ally",this.startDire)
+        this.gridEngine.turnTowards("ally2",this.startDire)
+        this.gridEngine.turnTowards("ally3",this.startDire)
+        //start scene fade in
+        camera.fadeIn(FADE_TIME)
         //events
         eventCenter.on("reset-facing-direction",(npcKey : string)=>{
             this.time.delayedCall(1200,()=>{
@@ -116,8 +122,9 @@ export class DungeonMap extends Phaser.Scene {
             })
         },this)
         this.events.once("load-map",(mapKey:string,pos:Position)=>{
+            camera.fadeOut(FADE_TIME)
             //If u don't do delayedCall, this would never work.
-            this.time.delayedCall(300,()=>{
+            this.time.delayedCall(FADE_TIME,()=>{
                 this.scene.restart(this.mapManager.getDataInfo(mapKey,pos))
             })
         })
@@ -175,10 +182,11 @@ export class DungeonMap extends Phaser.Scene {
             return Direction.LEFT;
         }
     }
-    isFacing(pos: Position){
+    isFacing(pos: Position,dire: Direction){
         if(this.gridEngine.isMoving("player")==false){
             if(pos.x == this.gridEngine.getPosition("player").x
-            && pos.y == this.gridEngine.getPosition("player").y)
+            && pos.y == this.gridEngine.getPosition("player").y
+            && dire == this.gridEngine.getFacingDirection("player"))
             return true
         }
         else return false
@@ -231,14 +239,14 @@ export class DungeonMap extends Phaser.Scene {
     mapTransition(){
         switch(this.settingID){
             case "testMap":{
-                if(this.isFacing({x: 19,y: 9}))
+                if(this.isFacing({x: 19,y: 9},Direction.UP))
                 {
                     this.events.emit("load-map","testMap2",{x: 14,y: 39})
                     //eventCenter.emit("load-map","testMap",{x: 15,y: 21})
                 }
             }
             case "testMap2":{
-                if(this.isFacing({x: 14,y: 0}))
+                if(this.isFacing({x: 14,y: 0},Direction.UP))
                 {
                     this.events.emit("load-map","testMap",{x: 15,y: 21})
                 }
