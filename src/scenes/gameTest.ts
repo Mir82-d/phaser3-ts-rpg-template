@@ -1,3 +1,4 @@
+import { Direction } from "grid-engine";
 import * as Phaser from "phaser";
 
 export class GameTest extends Phaser.Scene {
@@ -17,7 +18,7 @@ export class GameTest extends Phaser.Scene {
 
         logo.setInteractive()
         logo.on('pointerdown', () => {
-            this.scene.start('mapManager',{key:"testMap",pos:{x: 10,y: 16}})
+            this.scene.start('mapManager',{key:"testMap",pos:{x: 15,y: 21},dire:Direction.UP})
         })
 
         this.tweens.add({

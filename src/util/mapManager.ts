@@ -7,10 +7,12 @@ export class MapManager extends Phaser.Scene{
 
     private mapKey: string
     private startPosition: Position
+    private startDirection: Direction
 
-    init(data: { key: string; pos: Position}){
+    init(data: { key: string; pos: Position; dire: Direction}){
         this.mapKey = data.key
         this.startPosition = data.pos
+        this.startDirection = data.dire
     }
 
     create(){
@@ -30,10 +32,10 @@ export class MapManager extends Phaser.Scene{
     loadMap(){
         this.scene.remove("map")
         this.scene.add("map", DungeonMap, false);
-        this.scene.launch("map",this.getDataInfo(this.mapKey,this.startPosition))
+        this.scene.launch("map",this.getDataInfo(this.mapKey,this.startPosition,this.startDirection))
     }
 
-    getDataInfo(mapKey: string,startPosition: Position){
+    getDataInfo(mapKey: string,startPosition: Position,startDirection: Direction){
         switch(mapKey){
             case "testMap":{
                 return {
@@ -43,7 +45,7 @@ export class MapManager extends Phaser.Scene{
                     jsonLocation:"assets/json/test_map.json",
                     mapName:"Test Dungeon",
                     startPos:startPosition,
-                    startDire:Direction.UP,
+                    startDire:startDirection,
                     settingID:"testMap",
                 }
             }
@@ -55,7 +57,7 @@ export class MapManager extends Phaser.Scene{
                     jsonLocation:"assets/json/test_map2.json",
                     mapName:"Test Dungeon 2",
                     startPos:startPosition,
-                    startDire:Direction.UP,
+                    startDire:startDirection,
                     settingID:"testMap2",
                 }
             }
@@ -68,6 +70,7 @@ export class MapManager extends Phaser.Scene{
                     jsonLocation:"",
                     mapName:"",
                     startPos:{x: 0,y: 0},
+                    startDire:Direction.DOWN,
                     settingID:"",
                 }
             }

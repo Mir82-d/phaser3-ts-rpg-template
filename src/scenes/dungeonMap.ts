@@ -121,11 +121,11 @@ export class DungeonMap extends Phaser.Scene {
                 this.gridEngine.turnTowards(npcKey,Direction.DOWN)
             })
         },this)
-        this.events.once("load-map",(mapKey:string,pos:Position)=>{
+        this.events.once("load-map",(mapKey:string,pos:Position,dire:Direction)=>{
             camera.fadeOut(FADE_TIME)
             //If u don't do delayedCall, this would never work.
             this.time.delayedCall(FADE_TIME,()=>{
-                this.scene.restart(this.mapManager.getDataInfo(mapKey,pos))
+                this.scene.restart(this.mapManager.getDataInfo(mapKey,pos,dire))
             })
         })
         //load dialogue
@@ -241,14 +241,18 @@ export class DungeonMap extends Phaser.Scene {
             case "testMap":{
                 if(this.isFacing({x: 19,y: 9},Direction.UP))
                 {
-                    this.events.emit("load-map","testMap2",{x: 14,y: 39})
+                    this.events.emit("load-map","testMap2",{x: 14,y: 39},Direction.UP)
                     //eventCenter.emit("load-map","testMap",{x: 15,y: 21})
                 }
             }
             case "testMap2":{
                 if(this.isFacing({x: 14,y: 0},Direction.UP))
                 {
-                    this.events.emit("load-map","testMap",{x: 15,y: 21})
+                    this.events.emit("load-map","testMap",{x: 15,y: 21},Direction.UP)
+                }
+                if(this.isFacing({x: 14,y: 39},Direction.DOWN))
+                {
+                    this.events.emit("load-map","testMap",{x: 19,y: 9},Direction.DOWN)
                 }
             }
             default:
