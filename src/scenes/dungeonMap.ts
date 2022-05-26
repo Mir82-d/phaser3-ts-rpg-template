@@ -19,6 +19,9 @@ export class DungeonMap extends Phaser.Scene {
     private startDire: Direction
     private settingID: string
 
+    private z_key!: Phaser.Input.Keyboard.Key
+    private x_key!: Phaser.Input.Keyboard.Key
+
     private dialogueDatabase: Phaser.Cache.BaseCache
     private mapManager: MapManager
 
@@ -32,7 +35,10 @@ export class DungeonMap extends Phaser.Scene {
         this.startDire = data.startDire
         this.settingID = data.settingID
 
+        this.z_key = this.input.keyboard.addKey('Z');
+        this.x_key = this.input.keyboard.addKey('X');
         this.mapManager = new MapManager(GameConfig)
+
     }
 
     preload() {
@@ -102,6 +108,7 @@ export class DungeonMap extends Phaser.Scene {
                     collides: false,
                 },
             ],
+            numberOfDirections: 8,
         };
         //setup npc for this map
         this.settingNPC()
@@ -131,35 +138,62 @@ export class DungeonMap extends Phaser.Scene {
         //load dialogue
         this.dialogueDatabase = this.cache.xml.get("dialogue")
     }
+    //custom animation
+    createPlayerAnimation(name:string, startFrame:number, endFrame:number) {
+        this.anims.create({
+          key: name,
+          frames: this.anims.generateFrameNumbers("player", {
+            start: startFrame,
+            end: endFrame,
+          }),
+          frameRate: 10,
+          repeat: -1,
+          yoyo: true,
+        });
+      }
     update() {
-        const cursors = this.input.keyboard.createCursorKeys();
-        if (cursors.left.isDown) {
-            this.gridEngine.move("player", Direction.LEFT);
+        const cursors = this.input.keyboard.createCursorKeys()
+        const z = Phaser.Input.Keyboard.JustDown(this.z_key)
+        const x = Phaser.Input.Keyboard.JustDown(this.x_key)
+
+        if (cursors.left.isDown && cursors.up.isDown) {
+            this.gridEngine.move("player", Direction.UP_LEFT)
+        } else if (cursors.left.isDown && cursors.down.isDown) {
+            this.gridEngine.move("player", Direction.DOWN_LEFT)
+        } else if (cursors.right.isDown && cursors.up.isDown) {
+            this.gridEngine.move("player", Direction.UP_RIGHT)
+        } else if (cursors.right.isDown && cursors.down.isDown) {
+            this.gridEngine.move("player", Direction.DOWN_RIGHT)
+        } else if (cursors.left.isDown) {
+            this.gridEngine.move("player", Direction.LEFT)
         } else if (cursors.right.isDown) {
-            this.gridEngine.move("player", Direction.RIGHT);
+            this.gridEngine.move("player", Direction.RIGHT)
         } else if (cursors.up.isDown) {
-            this.gridEngine.move("player", Direction.UP);
+            this.gridEngine.move("player", Direction.UP)
         } else if (cursors.down.isDown) {
-            this.gridEngine.move("player", Direction.DOWN);
+            this.gridEngine.move("player", Direction.DOWN)
         }
-        const z = this.input.keyboard.addKey('Z');
-        const x = this.input.keyboard.addKey('X');
         //following to player
         if(this.gridEngine.isMoving("player")){
-            this.gridEngine.moveTo("ally",this.gridEngine.getPosition("player"));
-            this.gridEngine.moveTo("ally2",this.gridEngine.getPosition("ally"));
-            this.gridEngine.moveTo("ally3",this.gridEngine.getPosition("ally2"));
+            this.gridEngine.moveTo("ally",this.gridEngine.getPosition("player"))
+            this.gridEngine.moveTo("ally2",this.gridEngine.getPosition("ally"))
+            this.gridEngine.moveTo("ally3",this.gridEngine.getPosition("ally2"))
         }
         //talk to npc
-        if(Phaser.Input.Keyboard.JustDown(z)){
+        if(z){
             this.gridEngine.getCharactersAt(this.gridEngine.getFacingPosition("player"),"playerField").forEach( charID =>{
                 if(charID.includes("npc")){
-                    this.gridEngine.turnTowards(charID,this.reverseDirection(this.gridEngine.getFacingDirection("player")));
+                    this.gridEngine.turnTowards(charID,this.reverseDirection(this.gridEngine.getFacingDirection("player")))
                     eventCenter.emit("reset-facing-direction",charID)
                     this.scene.launch('talkingWindow',{ name: this.getName(charID), txt: this.getDialogue(charID)})
-                    this.scene.pause();
+                    this.scene.pause()
                 }
             })
+        }
+        //open map menu
+        else if(x){
+            this.scene.launch('mapMenu')
+            this.scene.pause()
         }
         this.mapTransition()
     }

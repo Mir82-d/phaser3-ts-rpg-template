@@ -22,6 +22,8 @@ export default class TitleMenu extends Phaser.Scene {
 
     create() {
         this.add.shader('Background_Blue', 0, 0, 800, 600).setOrigin(0);
+        //clear buttons array when restart this scene
+        this.buttons.length = 0
 
         const{ width, height } = this.scale
         //set the background color
@@ -61,6 +63,7 @@ export default class TitleMenu extends Phaser.Scene {
         playButton.on('selected', () => {
             playButton.setFrame('buttonLong_blue.png')
             this.scene.start('mapManager',{key:"testMap",pos:{x: 15,y: 21},dire:Direction.UP})
+            this.scene.stop()
         })
         settingButton.on('selected', () => {
             settingButton.setFrame('buttonLong_blue.png')

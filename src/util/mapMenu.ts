@@ -1,0 +1,407 @@
+import * as Phaser from "phaser";
+import eventCenter from "./EventCenter";
+
+export class MapMenu extends Phaser.Scene{
+    private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
+    private z_key!: Phaser.Input.Keyboard.Key
+    private x_key!: Phaser.Input.Keyboard.Key
+
+    private buttons: Phaser.GameObjects.Text[] = []
+    private m_buttons: Phaser.GameObjects.Text[] = []
+    private a_buttons: Phaser.GameObjects.Text[] = []
+    private tmp_buttons: Phaser.GameObjects.Text[] = []
+    private selectedButtonIndex = 0
+    private buttonSelector!: Phaser.GameObjects.Image
+    private layer_1!: Phaser.GameObjects.Layer;
+    private layer_2!: Phaser.GameObjects.Layer;
+    private layer_3!: Phaser.GameObjects.Layer;
+    private charName: Phaser.GameObjects.Text
+
+    private charNameStr: string[] = []
+    private char1Magic: string[] = []
+    private char2Magic: string[] = []
+    private char3Magic: string[] = []
+    private char4Magic: string[] = []
+    private charMagics: {[key: string]: string[]}
+    private NUMBER_OF_LINES = 2
+    private MENU_PHASE = 1
+    private pageIndex = 0
+
+    init(/* TODO */) {
+        this.cursors = this.input.keyboard.createCursorKeys()
+        this.z_key = this.input.keyboard.addKey('Z');
+        this.x_key = this.input.keyboard.addKey('X');
+
+        this.charNameStr = ["テスト1","テスト2","テスト3","テスト4"]
+        this.char1Magic = ["ボタン1","ボタン2","ボタン3"]
+        this.char2Magic = ["ああ1","ああ2"]
+        this.char3Magic = []
+        this.char4Magic = ["ヒーリングγ"]
+        this.charMagics = {0:this.char1Magic,
+                           1:this.char2Magic,
+                           2:this.char3Magic,
+                           3:this.char4Magic}
+    }
+
+    preload() {
+        this.load.atlasXML('ui-texture','assets/img/uipack_rpg_sheet.png','assets/img/uipack_rpg_sheet.xml')
+    }
+
+    create() {
+        //clear buttons array when restart this scene
+        this.buttons.length = 0
+        this.m_buttons.length = 0
+        this.tmp_buttons.length = 0
+        this.a_buttons.length = 0
+
+        this.scene.bringToTop()
+        const{ width, height } = this.scale
+
+        //main menu panel
+        const mainPanel = this.add.image(width*0.3,height*0.2,'ui-texture','panel_blue.png').setOrigin(0.5)
+        mainPanel.scaleX = 3.1
+        mainPanel.scaleY = 1.3
+
+        //status (button of left upside)
+        const status = this.add.text(mainPanel.x-60, mainPanel.y-25,'status-button',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        status.text = "つよさ"
+
+        //magic (button of left downside)
+        const magic = this.add.text(status.x, status.y+status.displayHeight+30,'magic-button',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        magic.text = "まほう"
+
+        //inventory (button of right upside)
+        const inventory = this.add.text(status.x+120, status.y,'inventory-button',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        inventory.text = "もちもの"
+
+        //exit (button of right downside)
+        const exit = this.add.text(inventory.x, inventory.y+inventory.displayHeight+30,'inventory-button',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        exit.text = "おわる"
+
+        //push to buttons array
+        this.buttons.push(status)
+        this.buttons.push(magic)
+        this.buttons.push(inventory)
+        this.buttons.push(exit)
+
+        //button selector
+        this.buttonSelector = this.add.image(0,0,'ui-texture',"arrowSilver_right.png")
+        this.buttonSelector.depth = 3
+
+        //status panel
+        this.layer_1 = this.add.layer();
+        const statusPanel = this.add.image(width*0.7,height*0.3,'ui-texture','panel_blue.png').setOrigin(0.5)
+        statusPanel.scaleX = 2.8
+        statusPanel.scaleY = 3.5
+        this.layer_1.add(statusPanel)
+
+        //magic panel(page menu)
+        this.layer_2 = this.add.layer();
+        const magicPanel = this.add.image(width*0.7,height*0.2,'ui-texture','panel_blue.png').setOrigin(0.5)
+        magicPanel.scaleX = 3.1
+        magicPanel.scaleY = 1.7
+
+        const charNameRect = this.add.image(magicPanel.x-magicPanel.displayWidth/2+70,magicPanel.y-magicPanel.displayHeight/2+10,
+            'ui-texture','buttonLong_blue.png').setOrigin(0.5)
+        charNameRect.scaleX = 0.8
+        charNameRect.scaleY = 1.0
+
+        const arrowRight = this.add.image(magicPanel.x-magicPanel.displayWidth/2+260,magicPanel.y-magicPanel.displayHeight/2+20,
+            'ui-texture',"arrowSilver_right.png")
+        const arrowLeft = this.add.image(magicPanel.x-magicPanel.displayWidth/2+230,magicPanel.y-magicPanel.displayHeight/2+20,
+            'ui-texture',"arrowSilver_left.png")
+
+        this.charName = this.add.text(charNameRect.x,charNameRect.y,'char-name',{ "fontSize": "15px"}).setOrigin(0.5)
+
+        const magic1 = this.add.text(magicPanel.x-30, magicPanel.y-25,'',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        const magic2 = this.add.text(magic1.x, magic1.y+25,'',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        const magic3 = this.add.text(magic2.x, magic2.y+25,'',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        const magic4 = this.add.text(magic3.x, magic3.y+25,'',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+
+        this.layer_2.add(magicPanel)
+        this.layer_2.add(charNameRect)
+        this.layer_2.add(arrowRight)
+        this.layer_2.add(arrowLeft)
+        this.layer_2.add(this.charName)
+        this.layer_2.add(magic1)
+        this.layer_2.add(magic2)
+        this.layer_2.add(magic3)
+        this.layer_2.add(magic4)
+        //push to m_buttons array
+        this.m_buttons.push(magic1)
+        this.m_buttons.push(magic2)
+        this.m_buttons.push(magic3)
+        this.m_buttons.push(magic4)
+
+        //ally select panel
+        this.layer_3 = this.add.layer()
+        const allySelectPanel = this.add.image(width*0.55,height*0.4,'ui-texture','buttonLong_blue_pressed.png').setOrigin(0.5)
+        allySelectPanel.scaleX = 3.4
+        allySelectPanel.scaleY = 1.2
+
+        const ally1 = this.add.text(allySelectPanel.x-allySelectPanel.displayWidth/2+100,allySelectPanel.y,'',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        ally1.text = this.charNameStr[0]
+        const ally2 = this.add.text(ally1.x+ally1.displayWidth+50,allySelectPanel.y,'',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        ally2.text = this.charNameStr[1]
+        const ally3 = this.add.text(ally2.x+ally2.displayWidth+50,allySelectPanel.y,'',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        ally3.text = this.charNameStr[2]
+        const ally4 = this.add.text(ally3.x+ally3.displayWidth+50,allySelectPanel.y,'',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
+        ally4.text = this.charNameStr[3]
+
+        this.layer_3.add(allySelectPanel)
+        this.layer_3.add(ally1)
+        this.layer_3.add(ally2)
+        this.layer_3.add(ally3)
+        this.layer_3.add(ally4)
+
+        //push to a_buttons array
+        this.a_buttons.push(ally1)
+        this.a_buttons.push(ally2)
+        this.a_buttons.push(ally3)
+        this.a_buttons.push(ally4)
+        //remove '' object
+        this.a_buttons.filter(object => !(object.text == ''))
+
+        this.layer_1.setVisible(false)
+        this.layer_2.setVisible(false)
+        this.layer_3.setVisible(false)
+        this.selectButton(0,this.buttons)
+        this.selectPage(0)
+
+        eventCenter.on("menu-close",()=>{
+            this.scene.resume('map')
+            this.scene.stop()
+        })
+        status.on('selected',()=>{
+            //TODO
+            this.layer_1.setVisible(true)
+            this.selectPage(0)
+        })
+        magic.on('selected',()=>{
+            //TODO
+            this.layer_2.setVisible(true)
+            this.selectPage(0)
+        })
+        inventory.on('selected',()=>{
+            //TODO
+        })
+        exit.on('selected',()=>{
+            //TODO
+            this.scene.stop()
+            eventCenter.emit("back-to-title")
+        })
+        magic1.on('selected',()=>{
+            //TODO
+            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.selectedButtonIndex])
+            console.log(this.pageIndex,this.selectedButtonIndex) //charId,magicId
+        })
+        magic2.on('selected',()=>{
+            //TODO
+            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.selectedButtonIndex])
+            console.log(this.pageIndex,this.selectedButtonIndex) //charId,magicId
+        })
+        magic3.on('selected',()=>{
+            //TODO
+            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.selectedButtonIndex])
+            console.log(this.pageIndex,this.selectedButtonIndex) //charId,magicId
+        })
+        magic4.on('selected',()=>{
+            //TODO
+            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.selectedButtonIndex])
+            console.log(this.pageIndex,this.selectedButtonIndex) //charId,magicId
+        })
+        ally1.on('selected',()=>{
+            //TODO
+            console.log(this.a_buttons[this.selectedButtonIndex].text)
+        })
+        ally2.on('selected',()=>{
+            //TODO
+        })
+        ally3.on('selected',()=>{
+            //TODO
+        })
+        ally4.on('selected',()=>{
+            //TODO
+        })
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
+            status.off('selected')
+            magic.off('selected')
+            inventory.off('selected')
+            exit.off('selected')
+            magic1.off('selected')
+            magic2.off('selected')
+            magic3.off('selected')
+            magic4.off('selected')
+            eventCenter.off('menu-close')
+        })
+    }
+
+    selectButton(index: number,buttonsArray: Phaser.GameObjects.Text[]) {
+        const currentButton = buttonsArray[this.selectedButtonIndex]
+
+	    // set the current selected button to a white tint
+	    //currentButton.setTint(0xffffff)
+
+	    const button = buttonsArray[index]
+
+	    // set the newly selected button to a green tint
+	    //button.setTint(0x66ff7f)
+
+	    // move the cursor to the left edge
+	    this.buttonSelector.x = button.x - button.displayWidth / 2 - 20
+	    this.buttonSelector.y = button.y - 2
+
+	    // store the new selected index
+	    this.selectedButtonIndex = index
+    }
+
+    selectNextButton(change = 1,buttonsArray: Phaser.GameObjects.Text[]) {
+        let index = this.selectedButtonIndex + change
+
+        if(index >= buttonsArray.length){
+            index = 0
+        }
+        else if(index < 0){
+            index = buttonsArray.length-1
+        }
+        this.selectButton(index,buttonsArray)
+    }
+
+    confirmSelection(buttonsArray: Phaser.GameObjects.Text[]) {
+        // get the currently selected button
+	    const button = buttonsArray[this.selectedButtonIndex]
+
+        // emit the 'selected' event
+	    button.emit('selected')
+    }
+
+    selectNextPage(change = 1){
+        let index = this.pageIndex + change
+        if(index >= this.charNameStr.length){
+            index = 0
+        }
+        else if(index < 0){
+            index = this.charNameStr.length-1
+        }
+        this.selectPage(index)
+    }
+
+    selectPage(index: number){
+        //TODO
+        if(this.layer_2.visible){
+            this.charName.text = this.charNameStr[index]
+            let i = 0
+            this.tmp_buttons.length = 0
+            this.m_buttons.forEach((object)=>{
+                object.setVisible(false)
+            })
+            this.charMagics[index].forEach((txt)=>{
+                this.tmp_buttons.push(this.m_buttons[i])
+                this.tmp_buttons[i].text = txt
+                this.tmp_buttons[i].setVisible(true)
+                i++
+            })
+        }
+        else if(this.layer_1.visible){
+            //TODO
+        }
+        
+        this.pageIndex = index
+    }
+
+    update() {
+        const up = Phaser.Input.Keyboard.JustDown(this.cursors.up!)
+        const down = Phaser.Input.Keyboard.JustDown(this.cursors.down!)
+        const left = Phaser.Input.Keyboard.JustDown(this.cursors.left!)
+        const right = Phaser.Input.Keyboard.JustDown(this.cursors.right!)
+        const z = Phaser.Input.Keyboard.JustUp(this.z_key!)
+        const x = Phaser.Input.Keyboard.JustDown(this.x_key!)
+
+        if(this.layer_1.visible){
+            //TODO
+            if(x){
+                this.layer_1.setVisible(false)
+            }
+        }
+        //for magic selection menu
+        else if(this.layer_2.visible){
+            //TODO
+            if(this.MENU_PHASE == 1){
+                if(x){
+                    this.layer_2.setVisible(false)
+                }
+                else if(z){
+                    if(this.tmp_buttons.length != 0){
+                        this.MENU_PHASE = 2
+                        this.selectButton(0,this.tmp_buttons)
+                    }
+                }
+                else if(right){
+                    this.selectNextPage(1)
+                }
+                else if(left){
+                    this.selectNextPage(-1)
+                }
+            }
+            else if(this.MENU_PHASE == 2){
+                if(x){
+                    this.MENU_PHASE = 1
+                    this.selectButton(1,this.buttons)
+                }
+                else if(z){
+                    //TODO
+                    this.confirmSelection(this.tmp_buttons)
+                    this.layer_3.setVisible(true)
+                    this.selectButton(0,this.a_buttons)
+                    this.MENU_PHASE = 3
+                }
+                else if(up){
+                    this.selectNextButton(-1,this.tmp_buttons)
+                }
+                else if(down){
+                    this.selectNextButton(1,this.tmp_buttons)
+                }
+            }
+            else if(this.MENU_PHASE == 3){
+                //TODO
+                if(x){
+                    this.layer_3.setVisible(false)
+                    this.MENU_PHASE = 2
+                    this.selectButton(0,this.tmp_buttons)
+                }
+                else if(z){
+                    this.confirmSelection(this.a_buttons)
+                    eventCenter.emit("menu-close")
+                    this.MENU_PHASE = 1
+                }
+                else if(left){
+                    this.selectNextButton(-1,this.a_buttons)
+                }
+                else if(right){
+                    this.selectNextButton(1,this.a_buttons)
+                }
+            }
+        }
+        else{
+            if(up){
+                this.selectNextButton(-1,this.buttons)
+            }
+            else if(down){
+                this.selectNextButton(1,this.buttons)
+            }
+            else if(left){
+                this.selectNextButton(-this.NUMBER_OF_LINES,this.buttons)
+            }
+            else if(right){
+                this.selectNextButton(this.NUMBER_OF_LINES,this.buttons)
+            }
+            else if(z){
+                this.confirmSelection(this.buttons)
+            }
+            else if(x){
+                //TODO
+                eventCenter.emit("menu-close")
+            }
+        }
+    }
+}

@@ -5,6 +5,7 @@ import { GameTest } from "./scenes/GameTest";
 import { TalkingWindow } from "./util/TalkingWindow";
 import { MapManager } from "./util/MapManager";
 import TitleMenu from "./scenes/TitleMenu";
+import { MapMenu } from "./util/MapMenu";
 
 // Phaser3のゲームクラスの記述（Phaser.Gameクラスを継承したGameクラスの記述）
 export class Game extends Phaser.Game {
@@ -13,22 +14,22 @@ export class Game extends Phaser.Game {
         super(config);
 
         // シーンにキーを割り振って登録
-        this.scene.add("start", Start, false);
-        this.scene.add("gameTest", GameTest, false);
+        this.scene.add("start", Start, false)
+        this.scene.add("gameTest", GameTest, false)
         this.scene.add("mapManager",MapManager,false)
         this.scene.add("titleMenu",TitleMenu,false)
-        //this.scene.add("map", MapTest, false);
 
         //util
-        this.scene.add("talkingWindow",TalkingWindow,false);
+        this.scene.add("talkingWindow",TalkingWindow,false)
+        this.scene.add("mapMenu",MapMenu,false)
 
         // シーンをスタート
-        this.scene.start("titleMenu");
+        this.scene.start("titleMenu")
     }
 }
 
 // ブラウザでDOM描写終了直後に呼び出される
 window.onload = () => {
     // Mainクラスのインスタンスを生成（ここで初めてゲームが生成）
-    const game = new Game(GameConfig);
+    const game = new Game(GameConfig)
 };

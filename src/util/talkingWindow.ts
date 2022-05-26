@@ -47,21 +47,19 @@ export class TalkingWindow extends Phaser.Scene{
         this.name = this.add.text(100,480,this.nameString,this.fontStyle).setOrigin(0.5)
         this.dialogue = this.add.text(60, 525, '',this.fontStyle).setMaxLines(2)
 
-        eventCenter.on("count-up", () => this.count++, this)
+        this.events.on("count-up", () => this.count++, this)
         //eventCenter.on("skip", this.displayText, this)
-        eventCenter.on("next", this.typewriteText, this)
-        eventCenter.on("end",()=>{
-            this.time.removeAllEvents()
+        this.events.on("next", this.typewriteText, this)
+        this.events.on("end",()=>{
             this.scene.resume('map')
-            this.scene.setVisible(false, 'talkingWindow')
-            this.scene.setActive(false, 'talkingWindow')
+            this.scene.stop()
         }, this)
 
         this.events.on(Phaser.Scenes.Events.SHUTDOWN,()=>{
-            eventCenter.off("count-up")
+            this.events.off("count-up")
             //eventCenter.off("skip")
-            eventCenter.off("next")
-            eventCenter.off("end")
+            this.events.off("next")
+            this.events.off("end")
         })
 
         this.typewriteText(this.dialogueArr[0])
@@ -79,7 +77,7 @@ export class TalkingWindow extends Phaser.Scene{
                 this.dialogue.text += txt[i]
                 ++i
                 if(i == length){
-                    eventCenter.emit("count-up")
+                    this.events.emit("count-up")
                 }
             },
             repeat: length - 1,
@@ -90,7 +88,7 @@ export class TalkingWindow extends Phaser.Scene{
         this.time.removeAllEvents()
         //this.timerEvent.remove()
         this.dialogue.text = txt
-        eventCenter.emit("count-up")
+        this.events.emit("count-up")
     }
     talkHandler(){
         const z = this.input.keyboard.addKey('Z');
@@ -102,21 +100,21 @@ export class TalkingWindow extends Phaser.Scene{
                     if(this.count % 2 == 0){
                         if(Phaser.Input.Keyboard.JustDown(z)){
                             this.dialogue.text = this.dialogueArr[this.count-1]
-                            eventCenter.emit("next","\n"+this.dialogueArr[this.count])
+                            this.events.emit("next","\n"+this.dialogueArr[this.count])
                         }
                     }
                     else{
                         this.dialogue.text = this.dialogueArr[this.count-1]
-                        eventCenter.emit("next","\n"+this.dialogueArr[this.count])
+                        this.events.emit("next","\n"+this.dialogueArr[this.count])
                     }
                 }
                 else {
-                    eventCenter.emit("next","\n"+this.dialogueArr[this.count])
+                    this.events.emit("next","\n"+this.dialogueArr[this.count])
                 }
             }
             else {
                 if(Phaser.Input.Keyboard.JustDown(z))
-                eventCenter.emit("end")
+                this.events.emit("end")
             }
         }
     }

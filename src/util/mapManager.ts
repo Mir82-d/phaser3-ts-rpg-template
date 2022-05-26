@@ -27,10 +27,17 @@ export class MapManager extends Phaser.Scene{
                 this.scene.launch("map",this.getDataInfo(mapKey,pos))
             })
         }) */
+        eventCenter.on("back-to-title",()=>{
+            this.scene.bringToTop()
+            this.cameras.main.fadeOut(400)
+            this.time.delayedCall(500,()=>{
+                this.scene.remove("map")
+                this.scene.start("titleMenu")
+            })
+        })
     }
 
     loadMap(){
-        this.scene.remove("map")
         this.scene.add("map", DungeonMap, false);
         this.scene.launch("map",this.getDataInfo(this.mapKey,this.startPosition,this.startDirection))
     }
