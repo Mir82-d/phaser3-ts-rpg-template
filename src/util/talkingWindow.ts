@@ -1,121 +1,65 @@
-import * as Phaser from "phaser";
-import { GameConfig } from "../config";
+import { Timeline } from "../type/Timeline";
+import { timelineData } from "../data/timeline";
+import { DialogBox, DialogBoxConfig } from "../objects/DialogBox";
+import { DialogPlayer } from "../objects/DialogPlayer";
 import eventCenter from "./EventCenter";
 
-export class TalkingWindow extends Phaser.Scene{
-    
-    private lowerRect : Phaser.GameObjects.Rectangle
-    private nameRect : Phaser.GameObjects.Rectangle
-    private dialogue : Phaser.GameObjects.Text
-    private dialogueString : string
-    private dialogueArr : string[]
-    private name : Phaser.GameObjects.Text
-    private nameString : string
-    private fontStyle: Phaser.Types.GameObjects.Text.TextStyle = { color: 'white', fontSize: '20px' }
-    private count : number
-    private timerEvent : Phaser.Time.TimerEvent
+export class TalkingWindow extends Phaser.Scene {
 
-    constructor(){
-        super(GameConfig);
-        this.dialogueString = "null"
-        this.nameString = "null"
+    private timeline?: Timeline
+
+    private z_key!: Phaser.Input.Keyboard.Key
+
+    init(data: any){
+        this.z_key = this.input.keyboard.addKey('Z');
+
+        const timelineID = data.timelineID
+
+        if(!(timelineID in timelineData)) {
+            console.error(`[ERROR] タイムラインID[${timelineID}]は登録されていません`)
+            return
+        }
+
+        this.timeline = timelineData[timelineID]
     }
 
-    talkingWindow(){
-        Phaser.Scene.call(TalkingWindow,{ key: 'talkingWindow' })
-    }
-
-    //get name,dialogue from map class
-    init(data: { name: string; txt: string; }){
-        this.nameString = data.name
-        this.dialogueString = data.txt
-        this.dialogueArr = this.dialogueString.split("\n")
-        this.count = 0
-    }
-
-    preload(){
-
-    }
-
-    create(){
+    create() {
         this.scene.bringToTop()
-        this.lowerRect = this.add.rectangle(400, 550, 750, 100,0x000000)
-        this.lowerRect.setStrokeStyle(2, 0xffffff)
-        this.nameRect = this.add.rectangle(100,480,200,40,0x000000).setOrigin(0.5)
-        this.nameRect.setStrokeStyle(2, 0xffffff)
+        if(!this.timeline){
+            return
+        }
 
-        this.name = this.add.text(100,480,this.nameString,this.fontStyle).setOrigin(0.5)
-        this.dialogue = this.add.text(60, 525, '',this.fontStyle).setMaxLines(2)
-
-        this.events.on("count-up", () => this.count++, this)
-        //eventCenter.on("skip", this.displayText, this)
-        this.events.on("next", this.typewriteText, this)
-        this.events.on("end",()=>{
+        eventCenter.on("end",()=>{
             this.scene.resume('map')
             this.scene.stop()
         }, this)
 
-        this.events.on(Phaser.Scenes.Events.SHUTDOWN,()=>{
-            this.events.off("count-up")
-            //eventCenter.off("skip")
-            this.events.off("next")
-            this.events.off("end")
-        })
+        const { width, height } = this.scale
 
-        this.typewriteText(this.dialogueArr[0])
+        const dialogBoxHeight = 100
+        const dialogBoxMargin = 20
+        const dialogBoxConfig: DialogBoxConfig = {
+            x: width*0.5,
+            y: height - dialogBoxMargin - dialogBoxHeight*0.5,
+            width: width - dialogBoxMargin*2,
+            height: dialogBoxHeight,
+            padding: 25,
+            margin: dialogBoxMargin,
+            textStyle: {fontSize:"20px"}
+        }
+        const dialogBox = new DialogBox(this, dialogBoxConfig)
+
+        //dialog player
+        const dialogPlayer = new DialogPlayer(this, dialogBox, {fontSize:"20px"})
+
+        dialogPlayer.start(this.timeline)
+        this.add.existing(dialogBox)
     }
 
     update(){
-        this.talkHandler()
-    }
-
-    typewriteText(txt : string){
-        const length = txt.length
-        let i = 0
-        this.timerEvent = this.time.addEvent({
-            callback: () => {
-                this.dialogue.text += txt[i]
-                ++i
-                if(i == length){
-                    this.events.emit("count-up")
-                }
-            },
-            repeat: length - 1,
-            delay: 40,
-        })
-    }
-    displayText(txt : string){
-        this.time.removeAllEvents()
-        //this.timerEvent.remove()
-        this.dialogue.text = txt
-        this.events.emit("count-up")
-    }
-    talkHandler(){
-        const z = this.input.keyboard.addKey('Z');
-        if(this.timerEvent.getRemaining()==0){
-            //this.timerEvent.remove()
-            this.time.removeAllEvents()
-            if(this.count < this.dialogueArr.length){
-                if(this.count > 1){
-                    if(this.count % 2 == 0){
-                        if(Phaser.Input.Keyboard.JustDown(z)){
-                            this.dialogue.text = this.dialogueArr[this.count-1]
-                            this.events.emit("next","\n"+this.dialogueArr[this.count])
-                        }
-                    }
-                    else{
-                        this.dialogue.text = this.dialogueArr[this.count-1]
-                        this.events.emit("next","\n"+this.dialogueArr[this.count])
-                    }
-                }
-                else {
-                    this.events.emit("next","\n"+this.dialogueArr[this.count])
-                }
-            }
-            else {
-                if(Phaser.Input.Keyboard.JustDown(z))
-                this.events.emit("end")
-            }
+        const z = Phaser.Input.Keyboard.JustDown(this.z_key)
+        if(z){
+            eventCenter.emit("next")
         }
     }
 

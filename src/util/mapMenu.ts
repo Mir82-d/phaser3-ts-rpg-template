@@ -1,4 +1,5 @@
 import * as Phaser from "phaser";
+import { ButtonSelector, ButtonSelectorConfig } from "../objects/ButtonSelector";
 import eventCenter from "./EventCenter";
 
 export class MapMenu extends Phaser.Scene{
@@ -11,7 +12,7 @@ export class MapMenu extends Phaser.Scene{
     private a_buttons: Phaser.GameObjects.Text[] = []
     private tmp_buttons: Phaser.GameObjects.Text[] = []
     private selectedButtonIndex = 0
-    private buttonSelector!: Phaser.GameObjects.Image
+    private buttonSelector: ButtonSelector
     private layer_1!: Phaser.GameObjects.Layer;
     private layer_2!: Phaser.GameObjects.Layer;
     private layer_3!: Phaser.GameObjects.Layer;
@@ -27,20 +28,22 @@ export class MapMenu extends Phaser.Scene{
     private MENU_PHASE = 1
     private pageIndex = 0
 
-    init(/* TODO */) {
+    init(data: { charNames: string[];}) {
         this.cursors = this.input.keyboard.createCursorKeys()
         this.z_key = this.input.keyboard.addKey('Z');
         this.x_key = this.input.keyboard.addKey('X');
 
-        this.charNameStr = ["テスト1","テスト2","テスト3","テスト4"]
+        this.charNameStr = data.charNames
         this.char1Magic = ["ボタン1","ボタン2","ボタン3"]
         this.char2Magic = ["ああ1","ああ2"]
-        this.char3Magic = []
-        this.char4Magic = ["ヒーリングγ"]
-        this.charMagics = {0:this.char1Magic,
-                           1:this.char2Magic,
-                           2:this.char3Magic,
-                           3:this.char4Magic}
+        this.char3Magic = ["ヒーリングγ"]
+        this.char4Magic = []
+        this.charMagics = {
+            0:this.char1Magic,
+            1:this.char2Magic,
+            2:this.char3Magic,
+            3:this.char4Magic
+        }
     }
 
     preload() {
@@ -85,8 +88,13 @@ export class MapMenu extends Phaser.Scene{
         this.buttons.push(exit)
 
         //button selector
-        this.buttonSelector = this.add.image(0,0,'ui-texture',"arrowSilver_right.png")
-        this.buttonSelector.depth = 3
+        const config: ButtonSelectorConfig = {
+            enableArrow: true,
+            enableTint: false,
+            depth: 3
+        }
+        this.buttonSelector = new ButtonSelector(this,config)
+        this.buttonSelector.selectButton(0,this.buttons)
 
         //status panel
         this.layer_1 = this.add.layer();
@@ -147,6 +155,8 @@ export class MapMenu extends Phaser.Scene{
         ally3.text = this.charNameStr[2]
         const ally4 = this.add.text(ally3.x+ally3.displayWidth+50,allySelectPanel.y,'',{ "fontSize": "20px", "align":"left"}).setOrigin(0.5)
         ally4.text = this.charNameStr[3]
+        //remove '' object
+        this.charNameStr = this.charNameStr.filter(object => !(object == ''))
 
         this.layer_3.add(allySelectPanel)
         this.layer_3.add(ally1)
@@ -160,15 +170,14 @@ export class MapMenu extends Phaser.Scene{
         this.a_buttons.push(ally3)
         this.a_buttons.push(ally4)
         //remove '' object
-        this.a_buttons.filter(object => !(object.text == ''))
-
+        this.a_buttons = this.a_buttons.filter(object => !(object.text == ''))
         this.layer_1.setVisible(false)
         this.layer_2.setVisible(false)
         this.layer_3.setVisible(false)
-        this.selectButton(0,this.buttons)
+        this.buttonSelector.selectButton(0,this.buttons)
         this.selectPage(0)
 
-        eventCenter.on("menu-close",()=>{
+        this.events.on("menu-close",()=>{
             this.scene.resume('map')
             this.scene.stop()
         })
@@ -192,30 +201,31 @@ export class MapMenu extends Phaser.Scene{
         })
         magic1.on('selected',()=>{
             //TODO
-            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.selectedButtonIndex])
-            console.log(this.pageIndex,this.selectedButtonIndex) //charId,magicId
+            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.buttonSelector.getSelectedIndex()])
+            console.log(this.pageIndex,this.buttonSelector.getSelectedIndex()) //charId,magicId
         })
         magic2.on('selected',()=>{
             //TODO
-            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.selectedButtonIndex])
-            console.log(this.pageIndex,this.selectedButtonIndex) //charId,magicId
+            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.buttonSelector.getSelectedIndex()])
+            console.log(this.pageIndex,this.buttonSelector.getSelectedIndex()) //charId,magicId
         })
         magic3.on('selected',()=>{
             //TODO
-            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.selectedButtonIndex])
-            console.log(this.pageIndex,this.selectedButtonIndex) //charId,magicId
+            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.buttonSelector.getSelectedIndex()])
+            console.log(this.pageIndex,this.buttonSelector.getSelectedIndex()) //charId,magicId
         })
         magic4.on('selected',()=>{
             //TODO
-            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.selectedButtonIndex])
-            console.log(this.pageIndex,this.selectedButtonIndex) //charId,magicId
+            console.log(this.charNameStr[this.pageIndex],this.charMagics[this.pageIndex][this.buttonSelector.getSelectedIndex()])
+            console.log(this.pageIndex,this.buttonSelector.getSelectedIndex()) //charId,magicId
         })
         ally1.on('selected',()=>{
             //TODO
-            console.log(this.a_buttons[this.selectedButtonIndex].text)
+            console.log(this.a_buttons[this.buttonSelector.getSelectedIndex()].text)
         })
         ally2.on('selected',()=>{
             //TODO
+            console.log(this.a_buttons[this.buttonSelector.getSelectedIndex()].text)
         })
         ally3.on('selected',()=>{
             //TODO
@@ -232,50 +242,12 @@ export class MapMenu extends Phaser.Scene{
             magic2.off('selected')
             magic3.off('selected')
             magic4.off('selected')
-            eventCenter.off('menu-close')
+            this.events.off('menu-close')
         })
     }
 
-    selectButton(index: number,buttonsArray: Phaser.GameObjects.Text[]) {
-        const currentButton = buttonsArray[this.selectedButtonIndex]
 
-	    // set the current selected button to a white tint
-	    //currentButton.setTint(0xffffff)
-
-	    const button = buttonsArray[index]
-
-	    // set the newly selected button to a green tint
-	    //button.setTint(0x66ff7f)
-
-	    // move the cursor to the left edge
-	    this.buttonSelector.x = button.x - button.displayWidth / 2 - 20
-	    this.buttonSelector.y = button.y - 2
-
-	    // store the new selected index
-	    this.selectedButtonIndex = index
-    }
-
-    selectNextButton(change = 1,buttonsArray: Phaser.GameObjects.Text[]) {
-        let index = this.selectedButtonIndex + change
-
-        if(index >= buttonsArray.length){
-            index = 0
-        }
-        else if(index < 0){
-            index = buttonsArray.length-1
-        }
-        this.selectButton(index,buttonsArray)
-    }
-
-    confirmSelection(buttonsArray: Phaser.GameObjects.Text[]) {
-        // get the currently selected button
-	    const button = buttonsArray[this.selectedButtonIndex]
-
-        // emit the 'selected' event
-	    button.emit('selected')
-    }
-
-    selectNextPage(change = 1){
+    private selectNextPage(change = 1){
         let index = this.pageIndex + change
         if(index >= this.charNameStr.length){
             index = 0
@@ -286,7 +258,7 @@ export class MapMenu extends Phaser.Scene{
         this.selectPage(index)
     }
 
-    selectPage(index: number){
+    private selectPage(index: number){
         //TODO
         if(this.layer_2.visible){
             this.charName.text = this.charNameStr[index]
@@ -333,7 +305,7 @@ export class MapMenu extends Phaser.Scene{
                 else if(z){
                     if(this.tmp_buttons.length != 0){
                         this.MENU_PHASE = 2
-                        this.selectButton(0,this.tmp_buttons)
+                        this.buttonSelector.selectButton(0,this.tmp_buttons)
                     }
                 }
                 else if(right){
@@ -346,20 +318,20 @@ export class MapMenu extends Phaser.Scene{
             else if(this.MENU_PHASE == 2){
                 if(x){
                     this.MENU_PHASE = 1
-                    this.selectButton(1,this.buttons)
+                    this.buttonSelector.selectButton(1,this.buttons)
                 }
                 else if(z){
                     //TODO
-                    this.confirmSelection(this.tmp_buttons)
+                    this.buttonSelector.confirmSelection(this.tmp_buttons)
                     this.layer_3.setVisible(true)
-                    this.selectButton(0,this.a_buttons)
+                    this.buttonSelector.selectButton(0,this.a_buttons)
                     this.MENU_PHASE = 3
                 }
                 else if(up){
-                    this.selectNextButton(-1,this.tmp_buttons)
+                    this.buttonSelector.selectNextButton(-1,this.tmp_buttons)
                 }
                 else if(down){
-                    this.selectNextButton(1,this.tmp_buttons)
+                    this.buttonSelector.selectNextButton(1,this.tmp_buttons)
                 }
             }
             else if(this.MENU_PHASE == 3){
@@ -367,40 +339,40 @@ export class MapMenu extends Phaser.Scene{
                 if(x){
                     this.layer_3.setVisible(false)
                     this.MENU_PHASE = 2
-                    this.selectButton(0,this.tmp_buttons)
+                    this.buttonSelector.selectButton(0,this.tmp_buttons)
                 }
                 else if(z){
-                    this.confirmSelection(this.a_buttons)
-                    eventCenter.emit("menu-close")
+                    this.buttonSelector.confirmSelection(this.a_buttons)
+                    this.events.emit("menu-close")
                     this.MENU_PHASE = 1
                 }
                 else if(left){
-                    this.selectNextButton(-1,this.a_buttons)
+                    this.buttonSelector.selectNextButton(-1,this.a_buttons)
                 }
                 else if(right){
-                    this.selectNextButton(1,this.a_buttons)
+                    this.buttonSelector.selectNextButton(1,this.a_buttons)
                 }
             }
         }
         else{
             if(up){
-                this.selectNextButton(-1,this.buttons)
+                this.buttonSelector.selectNextButton(-1,this.buttons)
             }
             else if(down){
-                this.selectNextButton(1,this.buttons)
+                this.buttonSelector.selectNextButton(1,this.buttons)
             }
             else if(left){
-                this.selectNextButton(-this.NUMBER_OF_LINES,this.buttons)
+                this.buttonSelector.selectNextButton(-this.NUMBER_OF_LINES,this.buttons)
             }
             else if(right){
-                this.selectNextButton(this.NUMBER_OF_LINES,this.buttons)
+                this.buttonSelector.selectNextButton(this.NUMBER_OF_LINES,this.buttons)
             }
             else if(z){
-                this.confirmSelection(this.buttons)
+                this.buttonSelector.confirmSelection(this.buttons)
             }
             else if(x){
                 //TODO
-                eventCenter.emit("menu-close")
+                this.events.emit("menu-close")
             }
         }
     }

@@ -21,8 +21,10 @@ export class DungeonMap extends Phaser.Scene {
 
     private z_key!: Phaser.Input.Keyboard.Key
     private x_key!: Phaser.Input.Keyboard.Key
+    private c_key!: Phaser.Input.Keyboard.Key
 
     private dialogueDatabase: Phaser.Cache.BaseCache
+    private allyNames: string[] = []
     private mapManager: MapManager
 
     init(data: { tilesetLocation: string; tileKey: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; startDire: Direction; settingID: string}){
@@ -35,10 +37,11 @@ export class DungeonMap extends Phaser.Scene {
         this.startDire = data.startDire
         this.settingID = data.settingID
 
-        this.z_key = this.input.keyboard.addKey('Z');
-        this.x_key = this.input.keyboard.addKey('X');
+        this.z_key = this.input.keyboard.addKey('Z')
+        this.x_key = this.input.keyboard.addKey('X')
+        this.c_key = this.input.keyboard.addKey('C')
         this.mapManager = new MapManager(GameConfig)
-
+        this.allyNames = ["テスト1","テスト2","テスト3","テスト4"]
     }
 
     preload() {
@@ -155,6 +158,7 @@ export class DungeonMap extends Phaser.Scene {
         const cursors = this.input.keyboard.createCursorKeys()
         const z = Phaser.Input.Keyboard.JustDown(this.z_key)
         const x = Phaser.Input.Keyboard.JustDown(this.x_key)
+        const c = Phaser.Input.Keyboard.JustDown(this.c_key)
 
         if (cursors.left.isDown && cursors.up.isDown) {
             this.gridEngine.move("player", Direction.UP_LEFT)
@@ -185,15 +189,20 @@ export class DungeonMap extends Phaser.Scene {
                 if(charID.includes("npc")){
                     this.gridEngine.turnTowards(charID,this.reverseDirection(this.gridEngine.getFacingDirection("player")))
                     eventCenter.emit("reset-facing-direction",charID)
-                    this.scene.launch('talkingWindow',{ name: this.getName(charID), txt: this.getDialogue(charID)})
+                    //this.scene.launch('talkingWindow',{ name: this.getName(charID), txt: this.getDialogue(charID)})
+                    this.scene.launch('talkingWindow',{ timelineID: this.settingID+"_"+charID })
                     this.scene.pause()
                 }
             })
         }
         //open map menu
         else if(x){
-            this.scene.launch('mapMenu')
+            this.scene.launch('mapMenu',{charNames:this.allyNames})
             this.scene.pause()
+        }
+        //test
+        else if(c){
+            this.scene.start("gameTest")
         }
         this.mapTransition()
     }
@@ -241,6 +250,7 @@ export class DungeonMap extends Phaser.Scene {
                     walkingAnimationMapping: this.getRandomInt(0,7),
                     startPosition: {x: 12,y: 11},
                     charLayer: "playerField",
+                    //collisionTilePropertyName: "npc_cg",
                 });
                 //
                 const npcSpr2 = this.add.sprite(0,0,"player");

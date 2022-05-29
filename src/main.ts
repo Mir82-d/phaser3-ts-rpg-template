@@ -6,6 +6,7 @@ import { TalkingWindow } from "./util/TalkingWindow";
 import { MapManager } from "./util/MapManager";
 import TitleMenu from "./scenes/TitleMenu";
 import { MapMenu } from "./util/MapMenu";
+import { BattleMenu } from "./util/BattleMenu";
 
 // Phaser3のゲームクラスの記述（Phaser.Gameクラスを継承したGameクラスの記述）
 export class Game extends Phaser.Game {
@@ -22,6 +23,7 @@ export class Game extends Phaser.Game {
         //util
         this.scene.add("talkingWindow",TalkingWindow,false)
         this.scene.add("mapMenu",MapMenu,false)
+        this.scene.add("battleMenu",BattleMenu,false)
 
         // シーンをスタート
         this.scene.start("titleMenu")

@@ -1,0 +1,17 @@
+{
+    "testMap": {
+        "npc":{
+            "type":"dialog",
+            "text":"This is a test dialogue.\nこれはにほんごです。\nThis is line 3.\n4ぎょうめです。\n5ぎょうめですよ。",
+            "charName":"テスト1"
+        },
+        "npc2":{
+            "type":"dialog",
+            "text":"うごかないやつです。",
+            "charName":"テスト2"
+        }
+    },
+    "testMap2": {
+
+    }
+}
