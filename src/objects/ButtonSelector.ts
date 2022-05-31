@@ -1,5 +1,4 @@
 import * as Phaser from "phaser";
-import eventCenter from "../util/EventCenter";
 
 export type ButtonSelectorConfig = {
     enableArrow: boolean,
@@ -13,14 +12,15 @@ export class ButtonSelector extends Phaser.GameObjects.Container{
     private config: ButtonSelectorConfig
     private buttonSelector!: Phaser.GameObjects.Image
 
-    constructor(public scene: Phaser.Scene,{ enableArrow,enableTint,depth }:ButtonSelectorConfig){
+    constructor(public scene: Phaser.Scene,{ enableArrow, enableTint, depth }:ButtonSelectorConfig){
         super(scene,0,0)
         
         this.config = {enableArrow,enableTint}
         //replace texture on your own
         if(enableArrow){
             scene.load.atlasXML('ui-texture','assets/img/uipack_rpg_sheet.png','assets/img/uipack_rpg_sheet.xml')
-            this.buttonSelector = scene.add.image(0,0,'ui-texture',"arrowSilver_right.png")
+            this.buttonSelector = this.scene.add.image(0,0,'ui-texture',"arrowSilver_right.png")
+            this.scene.add.existing(this.buttonSelector)
         }
         if(depth){
             this.buttonSelector.depth = depth
@@ -66,10 +66,11 @@ export class ButtonSelector extends Phaser.GameObjects.Container{
 	    const button = buttonsArray[this.selectedButtonIndex]
 
         // emit the 'selected' event
-	    button.emit('selected')
+	    button.emit('selected',this.selectedButtonIndex)
         //eventCenter.emit('selected')
         //return button
     }
+    
     public getSelectedIndex(){
         return this.selectedButtonIndex
     }

@@ -23,7 +23,6 @@ export class DungeonMap extends Phaser.Scene {
     private x_key!: Phaser.Input.Keyboard.Key
     private c_key!: Phaser.Input.Keyboard.Key
 
-    private dialogueDatabase: Phaser.Cache.BaseCache
     private allyNames: string[] = []
     private mapManager: MapManager
 
@@ -51,7 +50,6 @@ export class DungeonMap extends Phaser.Scene {
             frameWidth: 52,
             frameHeight: 72,
         });
-        this.load.xml("dialogue","assets/xml/dialogue.xml")
     }
     create() {
         const FADE_TIME = 600;
@@ -125,7 +123,7 @@ export class DungeonMap extends Phaser.Scene {
         //start scene fade in
         camera.fadeIn(FADE_TIME)
         //events
-        eventCenter.on("reset-facing-direction",(npcKey : string)=>{
+        this.events.on("reset-facing-direction",(npcKey : string)=>{
             this.time.delayedCall(1200,()=>{
                 if(this.gridEngine.isMoving(npcKey)==false)
                 this.gridEngine.turnTowards(npcKey,Direction.DOWN)
@@ -134,12 +132,11 @@ export class DungeonMap extends Phaser.Scene {
         this.events.once("load-map",(mapKey:string,pos:Position,dire:Direction)=>{
             camera.fadeOut(FADE_TIME)
             //If u don't do delayedCall, this would never work.
-            this.time.delayedCall(FADE_TIME,()=>{
-                this.scene.restart(this.mapManager.getDataInfo(mapKey,pos,dire))
+            let info = this.mapManager.getDataInfo(mapKey,pos,dire)
+            this.time.delayedCall(FADE_TIME, ()=>{
+                this.scene.restart(info)
             })
         })
-        //load dialogue
-        this.dialogueDatabase = this.cache.xml.get("dialogue")
     }
     //custom animation
     createPlayerAnimation(name:string, startFrame:number, endFrame:number) {
@@ -188,7 +185,7 @@ export class DungeonMap extends Phaser.Scene {
             this.gridEngine.getCharactersAt(this.gridEngine.getFacingPosition("player"),"playerField").forEach( charID =>{
                 if(charID.includes("npc")){
                     this.gridEngine.turnTowards(charID,this.reverseDirection(this.gridEngine.getFacingDirection("player")))
-                    eventCenter.emit("reset-facing-direction",charID)
+                    this.events.emit("reset-facing-direction",charID)
                     //this.scene.launch('talkingWindow',{ name: this.getName(charID), txt: this.getDialogue(charID)})
                     this.scene.launch('talkingWindow',{ timelineID: this.settingID+"_"+charID })
                     this.scene.pause()
@@ -299,21 +296,6 @@ export class DungeonMap extends Phaser.Scene {
                     this.events.emit("load-map","testMap",{x: 19,y: 9},Direction.DOWN)
                 }
             }
-            default:
-                break
-        }
-    }
-    //TODO: NPCのセリフと名前をxmlで管理する
-    getName(key:string){
-        switch(key){
-            case "npc": return "テスト"
-            case "npc2": return "テスト2"
-        }
-    }
-    getDialogue(key:string){
-        switch(key){
-            case "npc": return "This is a test dialogue.\nこれはにほんごです。\nThis is line 3.\n4ぎょうめです。\n5ぎょうめですよ。"
-            case "npc2": return "うごかないやつです。"
             default:
                 break
         }

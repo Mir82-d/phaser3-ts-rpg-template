@@ -43,7 +43,8 @@ export class GameTest extends Phaser.Scene {
     update() {
         const c = Phaser.Input.Keyboard.JustDown(this.c_key)
         if(c){
-            this.scene.launch("battleMenu",{charNames: this.allyNames})
+            //this.scene.launch("battleMenu",{charNames: this.allyNames})
+            this.scene.launch("menuTest")
         }
     }
 }

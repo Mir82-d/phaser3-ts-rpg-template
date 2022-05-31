@@ -26,5 +26,5 @@ export const timelineData: Timelines = {
         {type: 'dialog',text: "いいえ を選びました。"},
         {type: 'end'}
     ],
-    //add timeline
+    //add timeline(dialog)
 }

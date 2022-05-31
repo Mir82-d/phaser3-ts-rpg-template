@@ -1,5 +1,4 @@
 import * as Phaser from "phaser";
-import eventCenter from "../util/EventCenter";
 
 export type DialogBoxConfig = {
     x: number,
@@ -18,8 +17,6 @@ export class DialogBox extends Phaser.GameObjects.Container {
 
     private charNameBox: Phaser.GameObjects.Rectangle
     private charNameTxt: Phaser.GameObjects.Text
-
-    private timerEvent : Phaser.Time.TimerEvent
 
     private padding: number
     private isReady: boolean

@@ -23,7 +23,7 @@ export class DialogPlayer {
         this.uiLayer = this.scene.add.container(0, 0)
         this.buttons.length = 0
 
-        eventCenter.on('next',(tmp_text:string)=>{
+        eventCenter.on('next',()=>{
             if(dialogBox.isReadyToNext())
                 this.next()
         })
@@ -101,11 +101,10 @@ export class DialogPlayer {
         choices.forEach((choice, index)=>{
             const y = buttonGroupOriginY + buttonHeight * (index + 0.5)
 
-            const button = new Phaser.GameObjects.Text(this.scene, width/2, y, choice.text, this.textStyle).setOrigin(0.5);
+            const button = new Phaser.GameObjects.Text(this.scene, width/2, y, choice.text, this.textStyle).setOrigin(0.5)
             button.setInteractive({
                 useHandCursor: true
             })
-            //仮
             button.on('pointerdown',()=>{
                 this.scene.scene.restart({ timelineID: choice.timelineID })
             })
