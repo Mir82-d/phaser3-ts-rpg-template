@@ -11,11 +11,3 @@ export type Command = {
     soundID?: string,
     animationID?: string
 }
-//TODO
-export type Magic = {
-    text: string,
-    magicID: string,
-    description?: string,
-    soundID?: string,
-    animationID?: string
-}
