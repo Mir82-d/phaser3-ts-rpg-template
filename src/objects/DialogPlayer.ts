@@ -121,6 +121,6 @@ export class DialogPlayer {
         }
         this.buttonSelector = new ButtonSelector(this.scene,buttonSelectorConfig)
         this.buttonSelector.selectButton(0,this.buttons)
-        //this.scene.add.existing(this.buttonSelector)
+        this.scene.add.existing(this.buttonSelector)
     }
 }

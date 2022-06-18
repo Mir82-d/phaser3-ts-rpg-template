@@ -283,7 +283,6 @@ export class DungeonMap extends Phaser.Scene {
                 if(this.isFacing({x: 19,y: 9},Direction.UP))
                 {
                     this.events.emit("load-map","testMap2",{x: 14,y: 39},Direction.UP)
-                    //eventCenter.emit("load-map","testMap",{x: 15,y: 21})
                 }
             }
             case "testMap2":{
