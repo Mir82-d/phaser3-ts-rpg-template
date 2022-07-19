@@ -1,6 +1,6 @@
 import { Timelines } from "../type/Timelines";
 
-export const timelineData: Timelines = {
+export const dialogDB: Timelines = {
     testMap_npc: [
         {type: 'dialog',text: "This is a test dialogue.\nこれはにほんごです。",charName: "テスト1"},
         {type: 'dialog',text: "This is line 3.\n4ぎょうめです。",charName: "テスト1"},

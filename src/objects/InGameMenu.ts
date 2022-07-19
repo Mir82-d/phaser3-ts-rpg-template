@@ -21,8 +21,6 @@ export class InGameMenu extends Phaser.GameObjects.Container{
 
     private line: number
     private column: number
-    private x_cordinate: number
-    private y_cordinate: number
     private padding: number
     private margin: number
     private textStyle: Phaser.Types.GameObjects.Text.TextStyle
@@ -134,19 +132,12 @@ export class InGameMenu extends Phaser.GameObjects.Container{
         })
         this.x_key.on('down',()=>{
             //TODO
-            //this.destroy()
+            eventCenter.emit('return')
         })
         this.scene.events.once(Phaser.GameObjects.Events.REMOVED_FROM_SCENE,()=>{
             this.removeAllListeners('down')
             this.removeAllListeners('selected')
             eventCenter.off('command-selected')
-            //this.bs.destroy(true)
-            this.z_key.off('down')
-            this.cursors.up.off('down')
-            this.cursors.down.off('down')
-            this.cursors.left.off('down')
-            this.cursors.right.off('down')
-            this.x_key.off('down')
         })
     }
     public getButtons(){

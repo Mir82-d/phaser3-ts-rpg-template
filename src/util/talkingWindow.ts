@@ -1,5 +1,5 @@
 import { Timeline } from "../type/Timeline";
-import { timelineData } from "../data/timeline";
+import { dialogDB } from "../data/dialogDB";
 import { DialogBox, DialogBoxConfig } from "../objects/DialogBox";
 import { DialogPlayer } from "../objects/DialogPlayer";
 import eventCenter from "./EventCenter";
@@ -15,12 +15,12 @@ export class TalkingWindow extends Phaser.Scene {
 
         const timelineID = data.timelineID
 
-        if(!(timelineID in timelineData)) {
+        if(!(timelineID in dialogDB)) {
             console.error(`[ERROR] タイムラインID[${timelineID}]は登録されていません`)
             return
         }
 
-        this.timeline = timelineData[timelineID]
+        this.timeline = dialogDB[timelineID]
     }
 
     create() {

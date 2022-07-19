@@ -1,13 +1,10 @@
 import { Command } from "./Choice"
 
-type MagicData = {
-    type: 'magic',
-    magics: Command[]
-}
-
-type MainCommandData = {
-    type: 'command',
+type CommandData = {
+    name: string
     commands: Command[]
+    magics: Command[]
+    healMagics: Command[]
 }
 
-export type CommandDataType = (MagicData|MainCommandData)[]
+export type CommandDataType = (CommandData)

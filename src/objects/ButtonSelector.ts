@@ -69,8 +69,6 @@ export class ButtonSelector extends Phaser.GameObjects.Container{
 
         // emit the 'selected' event
 	    button.emit('selected',this.selectedButtonIndex)
-        //eventCenter.emit('selected')
-        //return button
     }
     
     public getSelectedIndex(){
