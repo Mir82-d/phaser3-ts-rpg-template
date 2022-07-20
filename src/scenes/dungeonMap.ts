@@ -40,7 +40,7 @@ export class DungeonMap extends Phaser.Scene {
         this.x_key = this.input.keyboard.addKey('X')
         this.c_key = this.input.keyboard.addKey('C')
         this.mapManager = new MapManager(GameConfig)
-        this.charIDs = ["ally1","ally2","aally3","ally4"]
+        this.charIDs = ["ally1","ally2","ally3","ally4"]
     }
 
     preload() {

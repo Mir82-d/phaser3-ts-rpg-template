@@ -18,6 +18,7 @@ export class InGameMenu extends Phaser.GameObjects.Container{
     private panel: Phaser.GameObjects.Image
     private buttons: Phaser.GameObjects.Text[] = []
     private bs: ButtonSelector
+    private objCache: any[] = []
 
     private line: number
     private column: number
@@ -45,11 +46,16 @@ export class InGameMenu extends Phaser.GameObjects.Container{
         this.textStyle = textStyle
     }
 
-    public setupMenu(commands: Command[],name?: string, enableInput = false){
+    public setupMenu(commands: Command[],enableInput = false, name?: string){
         if(commands.length === 0){
             return
         }
-        
+        if(this.buttons.length != 0){
+            this.buttons.forEach((obj)=>{
+                obj.destroy()
+            })
+            this.buttons.length = 0
+        }
         const buttonHeight = 40,buttonWidth = 110,buttonMargin = 10
         const buttonGroupHeight = buttonHeight * this.line + buttonMargin * (this.line - 1)
         const buttonGroupWidth = buttonWidth * this.column + buttonMargin * this.column
@@ -74,9 +80,8 @@ export class InGameMenu extends Phaser.GameObjects.Container{
                     const button = new Phaser.GameObjects.Text(this.scene, x, y, commands[index].text, this.textStyle).setOrigin(0.5)
                     const command = commands[index]
                     button.on('selected',(index: number)=>{
-                        //TODO
-                        console.log(command.commandID)
-                        console.log(index)
+                        //console.log(command.commandID)
+                        //console.log(index)
                         //path command to the scene through this event
                         eventCenter.emit('command-selected',command)
                     })
@@ -102,9 +107,11 @@ export class InGameMenu extends Phaser.GameObjects.Container{
         nameText.setText(name)
         const bounds = nameText.getBounds()
         nameRect.displayWidth = bounds.width + this.padding*2
-
+        
         this.add(nameRect)
         this.add(nameText)
+        this.objCache.push(nameRect)
+        this.objCache.push(nameText)
     }
     private setupButtonSelector(){
         const buttonSelectorConfig: ButtonSelectorConfig = {
@@ -134,13 +141,51 @@ export class InGameMenu extends Phaser.GameObjects.Container{
             //TODO
             eventCenter.emit('return')
         })
-        this.scene.events.once(Phaser.GameObjects.Events.REMOVED_FROM_SCENE,()=>{
-            this.removeAllListeners('down')
+        this.scene.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
+            this.z_key.off('down')
+            this.cursors.up.off('down')
+            this.cursors.down.off('down')
+            this.cursors.left.off('down')
+            this.cursors.right.off('down')
+            this.x_key.off('down')
             this.removeAllListeners('selected')
             eventCenter.off('command-selected')
+            eventCenter.off('return')
         })
+    }
+    public resetMenu(commands: Command[],enableInput = false, name?: string){
+        if(commands.length === 0){
+            return
+        }
+        this.buttons.forEach((obj)=>{
+            obj.destroy()
+        })
+        this.objCache.forEach((obj)=>{
+            obj.destroy()
+        })
+        this.objCache.length = 0
+        this.buttons.length = 0
+        this.removeAll()
+        if(name == null) this.setupMenu(commands,enableInput)
+        else {
+            this.setupMenu(commands,enableInput,name)
+        }
     }
     public getButtons(){
         return this.buttons
+    }
+    public disableInput(){
+        this.z_key.off('down')
+        this.cursors.up.off('down')
+        this.cursors.down.off('down')
+        this.cursors.left.off('down')
+        this.cursors.right.off('down')
+        this.x_key.off('down')
+        if(this.bs != null){
+            this.bs.destroy()
+        }
+    }
+    public enableInput(){
+        this.setupButtonSelector()
     }
 }

@@ -42,7 +42,7 @@ export class MenuTest extends Phaser.Scene {
             column: 2,
         }
         this.ingameMenu = new InGameMenu(this, config)
-        this.ingameMenu.setupMenu(this.commands,"てすとマン",true)
+        this.ingameMenu.setupMenu(this.commands,true,"てすとマン")
         this.add.existing(this.ingameMenu)
 
         /* this.placedButtons = this.ingameMenu.getButtons()
@@ -62,7 +62,7 @@ export class MenuTest extends Phaser.Scene {
             column: 3,
         }
         this.ingameMenu2 = new InGameMenu(this, config2)
-        this.ingameMenu2.setupMenu(this.commands,"てすとマン2",true)
+        this.ingameMenu2.setupMenu(this.commands,true,"てすとマン2")
         this.add.existing(this.ingameMenu2)
     }
 
