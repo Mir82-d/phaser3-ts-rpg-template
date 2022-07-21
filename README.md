@@ -1,7 +1,7 @@
 # Phaser3 RPG Project template[WIP]
 This is the template project for making RPG game with Phaser3-TypeScript.(WIP)
 
-## Included
+## Contents
 - Phaser 3
 - [grid-engine](https://github.com/Annoraaq/grid-engine)
 - web-pack-dev-server v4.7.4
@@ -19,12 +19,12 @@ yarn run local
 ```
 yarn run dev
 ```
-## Materials used
+## Assets used
 - Map tile set: [Dungeon RPG Tileset](https://rekkimaru.itch.io/dungeon-rpg-tileset)
-- [character tile set](http://finalbossblues.com/timefantasy/freebies/more-character-sprites/)
+- Characters: [Character tile set](http://finalbossblues.com/timefantasy/freebies/more-character-sprites/)
+- UI pack: [UI Pack: RPG Expansion](https://kenney.nl/assets/ui-pack-rpg-expansion)
 - ...
 
 ## Dev tools
 - [Tiled Map Editor](https://thorbjorn.itch.io/tiled?ac=MbLnMaiNXvG)
-- [Phaser Editor 2d](https://phasereditor2d.com/)
 - ...
