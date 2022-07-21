@@ -7,6 +7,7 @@ export type Choice = {
 export type Command = {
     text: string,
     commandID: string,
+    target?: string,
     description?: string,
     soundID?: string,
     animationID?: string

@@ -30,6 +30,9 @@ export class BattleScene extends Phaser.Scene {
     }
 
     create(){
+        eventCenter.on('return',()=>{
+            
+        })
         eventCenter.on('command-selected',(command: Command)=>{
             this.commandHandler(command)
         })

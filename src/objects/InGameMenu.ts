@@ -121,6 +121,7 @@ export class InGameMenu extends Phaser.GameObjects.Container{
         this.bs = new ButtonSelector(this.scene,buttonSelectorConfig)
         this.bs.selectButton(0,this.buttons)
         this.add(this.bs)
+        this.objCache.push(this.bs)
 
         this.z_key.on('down',()=>{
             this.bs.confirmSelection(this.buttons)
