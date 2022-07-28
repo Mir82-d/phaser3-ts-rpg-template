@@ -1,5 +1,7 @@
 import * as Phaser from "phaser";
+import { GameConfig } from "../config";
 import { commandDatabase } from "../data/commandDB";
+import { sceneManager } from "../main";
 import { InGameMenu, InGameMenuConfig } from "../objects/InGameMenu"
 import { Command } from "../type/Choice";
 import { CommandDataBaseType } from "../type/CommandDataBaseType";
@@ -43,7 +45,7 @@ export class MapMenu extends Phaser.Scene {
     }
 
     preload(){
-
+        
     }
 
     create(){
@@ -99,6 +101,10 @@ export class MapMenu extends Phaser.Scene {
         this.layer_1.add(arrowRight)
         this.layer_1.setDepth(2)
         this.layer_1.setVisible(false)
+
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
+            this.events.off('menu-close')
+        })
     }
 
     update(){

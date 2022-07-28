@@ -2,7 +2,7 @@ import { GridEngine, Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import eventCenter from "../util/EventCenter";
 import * as Phaser from "phaser";
-import { MapManager } from "../util/MapManager";
+import { MapManager } from "./mapManager";
 import { GameConfig } from "../config";
 
 export class DungeonMap extends Phaser.Scene {
@@ -26,7 +26,7 @@ export class DungeonMap extends Phaser.Scene {
     private charIDs: string[] = []
     private mapManager: MapManager
 
-    init(data: { tilesetLocation: string; tileKey: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; startDire: Direction; settingID: string}){
+    public init(data: { tilesetLocation: string; tileKey: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; startDire: Direction; settingID: string}){
         this.tilesetLocation = data.tilesetLocation
         this.tileKey = data.tileKey
         this.jsonKey = data.jsonKey
@@ -43,7 +43,7 @@ export class DungeonMap extends Phaser.Scene {
         this.charIDs = ["ally1","ally2","ally3","ally4"]
     }
 
-    preload() {
+    public preload() {
         this.load.image(this.tileKey, this.tilesetLocation);
         this.load.tilemapTiledJSON(this.jsonKey, this.jsonLocation);
         this.load.spritesheet("player", "assets/img/characters.png", {
@@ -51,7 +51,7 @@ export class DungeonMap extends Phaser.Scene {
             frameHeight: 72,
         });
     }
-    create() {
+    public create() {
         const FADE_TIME = 600;
 
         const tilemap = this.make.tilemap({ key: this.jsonKey });
@@ -129,17 +129,20 @@ export class DungeonMap extends Phaser.Scene {
                 this.gridEngine.turnTowards(npcKey,Direction.DOWN)
             })
         },this)
-        this.events.once("load-map",(mapKey:string,pos:Position,dire:Direction)=>{
+        this.events.once("fade-out",()=>{
             camera.fadeOut(FADE_TIME)
-            //If u don't do delayedCall, this would never work.
-            let info = this.mapManager.getDataInfo(mapKey,pos,dire)
-            this.time.delayedCall(FADE_TIME, ()=>{
-                this.scene.restart(info)
-            })
+        })
+        this.events.once('load-map',(dist: string, distPos: Position, distDire: Direction, scene: typeof Phaser.Scene = null)=>{
+            this.loadMap(dist,distPos,distDire,scene)
+        })
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
+            this.events.off('restet-facing-direction')
+            this.events.off('fade-out')
+            this.events.off('load-map')
         })
     }
     //custom animation
-    createPlayerAnimation(name:string, startFrame:number, endFrame:number) {
+    public createPlayerAnimation(name:string, startFrame:number, endFrame:number) {
         this.anims.create({
           key: name,
           frames: this.anims.generateFrameNumbers("player", {
@@ -151,7 +154,7 @@ export class DungeonMap extends Phaser.Scene {
           yoyo: true,
         });
       }
-    update() {
+    public update() {
         const cursors = this.input.keyboard.createCursorKeys()
         const z = Phaser.Input.Keyboard.JustDown(this.z_key)
         const x = Phaser.Input.Keyboard.JustDown(this.x_key)
@@ -203,12 +206,12 @@ export class DungeonMap extends Phaser.Scene {
         }
         this.mapTransition()
     }
-    getRandomInt(min: number, max: number) {
+    private getRandomInt(min: number, max: number) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-    reverseDirection(dire:Direction){
+    private reverseDirection(dire:Direction){
         if(dire == Direction.DOWN){
             return Direction.UP;
         }
@@ -222,7 +225,7 @@ export class DungeonMap extends Phaser.Scene {
             return Direction.LEFT;
         }
     }
-    isFacing(pos: Position,dire: Direction){
+    private isFacing(pos: Position,dire: Direction){
         if(this.gridEngine.isMoving("player")==false){
             if(pos.x == this.gridEngine.getPosition("player").x
             && pos.y == this.gridEngine.getPosition("player").y
@@ -231,11 +234,11 @@ export class DungeonMap extends Phaser.Scene {
         }
         else return false
     }
-    spawnEnemy(){
-
+    public spawnEnemy(){
+        //TODO
     }
     //npc settings(npc id must be included "npc" letter)
-    settingNPC(){
+    public settingNPC(){
         switch(this.settingID){
             case "testMap":{
                 //NPC
@@ -267,7 +270,18 @@ export class DungeonMap extends Phaser.Scene {
                 break
         }
     }
-    settingNPCMovement(){
+    public pushCharacter(id: string,mapping: number,startPos: Position){
+        const npcSpr = this.add.sprite(0,0,"player");
+        npcSpr.scale = 1.5;
+        this.gridEngineConfig.characters.push({
+            id: id,
+            sprite: npcSpr,
+            walkingAnimationMapping: mapping,
+            startPosition: startPos,
+            charLayer: "playerField",
+        });
+    }
+    public settingNPCMovement(){
         switch(this.settingID){
             case "testMap":{
                 this.gridEngine.moveRandomly("npc",this.getRandomInt(1000,2000));
@@ -276,27 +290,75 @@ export class DungeonMap extends Phaser.Scene {
                 break
         }
     }
+    public setMovementType(id: string, type?: string, span?: number, radius: number = 2){
+        if (type == null){}
+        else {
+            if(span == null){
+                span = this.getRandomInt(1000,2000)
+            }
+            switch(type){
+                case 'random':
+                    this.gridEngine.moveRandomly(id,span)
+                    break
+                case 'radius':
+                    this.gridEngine.moveRandomly(id,span,radius)
+                    break
+                default:
+                    break
+            }
+        }
+    }
     //setting area transition point
-    mapTransition(){
+    public mapTransition(){
         switch(this.settingID){
             case "testMap":{
                 if(this.isFacing({x: 19,y: 9},Direction.UP))
                 {
-                    this.events.emit("load-map","testMap2",{x: 14,y: 39},Direction.UP)
+                    this.events.emit('load-map',"testMap2",{x: 14,y: 39},Direction.UP)
                 }
             }
             case "testMap2":{
                 if(this.isFacing({x: 14,y: 0},Direction.UP))
                 {
-                    this.events.emit("load-map","testMap",{x: 15,y: 21},Direction.UP)
+                    this.events.emit('load-map',"testMap",{x: 15,y: 21},Direction.UP)
                 }
                 if(this.isFacing({x: 14,y: 39},Direction.DOWN))
                 {
-                    this.events.emit("load-map","testMap",{x: 19,y: 9},Direction.DOWN)
+                    this.events.emit('load-map',"testMap",{x: 19,y: 9},Direction.DOWN)
                 }
             }
             default:
                 break
         }
+    }
+    public setTransitionPoint(fromPos: Position, fromDire: Direction, dist: string, distPos: Position, distDire: Direction, scene: typeof Phaser.Scene = null){
+        if(this.isFacing(fromPos,fromDire))
+        {
+            this.events.emit('load-map',dist,distPos,distDire,scene)
+            //this.loadMap(dist,distPos,distDire,scene)
+        }
+    }
+    private loadMap(mapKey:string,pos:Position,dire:Direction,nextScene?:typeof Phaser.Scene){
+        const FADE_TIME = 600;
+        this.events.emit('fade-out')
+        let info = this.mapManager.getDataInfo(mapKey,pos,dire)
+        if(nextScene == null){
+            this.time.delayedCall(FADE_TIME, ()=>{
+                this.scene.restart(info)
+            })
+        }
+        else{
+            let object = {
+                next: nextScene,
+                data: info
+            }
+            this.time.delayedCall(FADE_TIME, ()=>{
+                this.scene.remove("map")
+                this.scene.start('loading',object)
+            })
+        }
+    }
+    public getAreaID(){
+        return this.settingID
     }
 }

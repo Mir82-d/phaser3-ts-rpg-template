@@ -1,32 +1,27 @@
 import { Direction, Position } from "grid-engine";
 import * as Phaser from "phaser";
-import { DungeonMap } from "../scenes/DungeonMap";
-import eventCenter from "./EventCenter";
+import { DungeonMap } from "./dungeonMap";
+import { TestMap } from "../scenes/TestMap";
+import eventCenter from "../util/EventCenter";
 
 export class MapManager extends Phaser.Scene{
 
     private mapKey: string
     private startPosition: Position
     private startDirection: Direction
+    private startScene: Phaser.Scene
 
-    init(data: { key: string; pos: Position; dire: Direction}){
+    init(data: { key: string; pos: Position; dire: Direction; scene: Phaser.Scene}){
         this.mapKey = data.key
         this.startPosition = data.pos
         this.startDirection = data.dire
+        this.startScene = data.scene
     }
 
     create(){
         //for the first time
         this.loadMap()
-        /* eventCenter.on("load-map",(mapKey:string,pos:Position)=>{
-            this.mapKey = mapKey
-            this.startPosition = pos
-            //this.scene.pause("map")
-            //If u don't do delayedCall, this would never work.
-            this.time.delayedCall(300,()=>{
-                this.scene.launch("map",this.getDataInfo(mapKey,pos))
-            })
-        }) */
+        
         eventCenter.on("back-to-title",()=>{
             this.scene.bringToTop()
             this.cameras.main.fadeOut(400)
@@ -38,7 +33,7 @@ export class MapManager extends Phaser.Scene{
     }
 
     loadMap(){
-        this.scene.add("map", DungeonMap, false);
+        this.scene.add("map", this.startScene, false);
         this.scene.launch("map",this.getDataInfo(this.mapKey,this.startPosition,this.startDirection))
     }
 

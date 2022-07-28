@@ -1,5 +1,6 @@
 import { Direction } from "grid-engine";
 import * as Phaser from "phaser";
+import { TestMap } from "./TestMap";
 
 export default class TitleMenu extends Phaser.Scene {
 
@@ -62,7 +63,7 @@ export default class TitleMenu extends Phaser.Scene {
 
         playButton.on('selected', () => {
             playButton.setFrame('buttonLong_blue.png')
-            this.scene.start('mapManager',{key:"testMap",pos:{x: 15,y: 21},dire:Direction.UP})
+            this.scene.start('mapManager',{key:"testMap",pos:{x: 15,y: 21},dire:Direction.UP,scene:TestMap})
             this.scene.stop()
         })
         settingButton.on('selected', () => {

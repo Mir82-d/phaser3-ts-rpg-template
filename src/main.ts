@@ -3,14 +3,18 @@ import { GameConfig } from './config';
 import { Start } from "./scenes/Start";
 import { GameTest } from "./scenes/GameTest";
 import { TalkingWindow } from "./util/TalkingWindow";
-import { MapManager } from "./util/MapManager";
+import { MapManager } from "./class/mapManager";
 import TitleMenu from "./scenes/TitleMenu";
 import { MapMenu } from "./util/MapMenu";
 import { BattleMenu } from "./util/BattleMenu";
 import { MenuTest } from "./util/MenuTest";
+import { LoadingScene } from "./scenes/LoadingScene";
 
 // Phaser3のゲームクラスの記述（Phaser.Gameクラスを継承したGameクラスの記述）
 export class Game extends Phaser.Game {
+
+    private game: Phaser.Game
+
     constructor(config: Phaser.Types.Core.GameConfig) {
         // Phaser.Gameクラスにコンフィグを渡す
         super(config);
@@ -26,14 +30,13 @@ export class Game extends Phaser.Game {
         this.scene.add("mapMenu",MapMenu,false)
         //this.scene.add("battleMenu",BattleMenu,false)
         this.scene.add("menuTest",MenuTest,false)
+        this.scene.add("loading",LoadingScene,false)
 
         // シーンをスタート
         this.scene.start("titleMenu")
     }
 }
 
-// ブラウザでDOM描写終了直後に呼び出される
-window.onload = () => {
-    // Mainクラスのインスタンスを生成（ここで初めてゲームが生成）
-    const game = new Game(GameConfig)
-};
+export const game = new Game(GameConfig)
+
+export const sceneManager = new Phaser.Scenes.SceneManager(game,GameConfig)
