@@ -3,6 +3,7 @@ import * as Phaser from "phaser";
 import { DungeonMap } from "./dungeonMap";
 import { TestMap } from "../scenes/TestMap";
 import eventCenter from "../util/EventCenter";
+import { fileDB } from "../data/fileDB";
 
 export class MapManager extends Phaser.Scene{
 
@@ -30,54 +31,21 @@ export class MapManager extends Phaser.Scene{
                 this.scene.start("titleMenu")
             })
         })
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
+            eventCenter.off("back-to-title")
+        })
     }
 
     loadMap(){
         this.scene.add("map", this.startScene, false);
         this.scene.launch("map",this.getDataInfo(this.mapKey,this.startPosition,this.startDirection))
     }
-
-    getDataInfo(mapKey: string,startPosition: Position,startDirection: Direction){
-        switch(mapKey){
-            case "testMap":{
-                return {
-                    tilesetLocation:"assets/img/test-dungeon-tileset.png",
-                    tileKey:"tile1",
-                    jsonKey:"test-dungeon-map",
-                    jsonLocation:"assets/json/test_map.json",
-                    mapName:"Test Dungeon",
-                    startPos:startPosition,
-                    startDire:startDirection,
-                    settingID:"testMap",
-                }
-            }
-            case "testMap2":{
-                return {
-                    tilesetLocation:"assets/img/test-dungeon-tileset.png",
-                    tileKey:"tile1",
-                    jsonKey:"test-dungeon-map2",
-                    jsonLocation:"assets/json/test_map2.json",
-                    mapName:"Test Dungeon 2",
-                    startPos:startPosition,
-                    startDire:startDirection,
-                    settingID:"testMap2",
-                }
-            }
-            //追加していく
-            case "":{
-                return {
-                    tilesetLocation:"",
-                    tileKey:"",
-                    jsonKey:"",
-                    jsonLocation:"",
-                    mapName:"",
-                    startPos:{x: 0,y: 0},
-                    startDire:Direction.DOWN,
-                    settingID:"",
-                }
-            }
-            default:
-                break
+    //マップを読み込むときの情報を渡す
+    getDataInfo(mapKey: string, startPosition: Position, startDirection: Direction){
+        let fileInfo = fileDB[mapKey]
+        return {
+            data:fileInfo,
+            pos:{startPos: startPosition, startDire: startDirection}
         }
     }
 }

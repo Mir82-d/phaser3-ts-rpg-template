@@ -22,6 +22,7 @@ yarn run dev
 ## Assets used
 - Map tile set: [Dungeon RPG Tileset](https://rekkimaru.itch.io/dungeon-rpg-tileset)
 - Characters: [Character tile set](http://finalbossblues.com/timefantasy/freebies/more-character-sprites/)
+- Battlers: [31 RPG Battlers + 62 recolorings](https://limezu.itch.io/21rpg-battlers)
 - UI pack: [UI Pack: RPG Expansion](https://kenney.nl/assets/ui-pack-rpg-expansion)
 - ...
 

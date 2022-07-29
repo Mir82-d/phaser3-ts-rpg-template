@@ -4,6 +4,7 @@ import eventCenter from "../util/EventCenter";
 import * as Phaser from "phaser";
 import { MapManager } from "./mapManager";
 import { GameConfig } from "../config";
+import { FileDBType, FileInfo } from "../type/fileDBType";
 
 export class DungeonMap extends Phaser.Scene {
 
@@ -14,6 +15,9 @@ export class DungeonMap extends Phaser.Scene {
     private tileKey: string
     private jsonKey: string
     private jsonLocation: string
+    private enemySpriteLocation: string
+    private enemySpriteKey: string
+    private enemyAtrasLocation: string
     private mapName: string
     private startPos: Position
     private startDire: Direction
@@ -22,19 +26,27 @@ export class DungeonMap extends Phaser.Scene {
     private z_key!: Phaser.Input.Keyboard.Key
     private x_key!: Phaser.Input.Keyboard.Key
     private c_key!: Phaser.Input.Keyboard.Key
+    private cacheObj: any[] = []
 
     private charIDs: string[] = []
     private mapManager: MapManager
 
-    public init(data: { tilesetLocation: string; tileKey: string; jsonKey: string; jsonLocation: string; mapName: string; startPos: Position; startDire: Direction; settingID: string}){
-        this.tilesetLocation = data.tilesetLocation
-        this.tileKey = data.tileKey
-        this.jsonKey = data.jsonKey
-        this.jsonLocation = data.jsonLocation
-        this.mapName = data.mapName
-        this.startPos = data.startPos
-        this.startDire = data.startDire
-        this.settingID = data.settingID
+    public init(obj: {data: FileInfo, pos:{startPos: Position; startDire: Direction;} }){
+
+        this.tilesetLocation = obj.data.tilesetLocation
+        this.tileKey = obj.data.tileKey
+        this.jsonKey = obj.data.jsonKey
+        this.jsonLocation = obj.data.jsonLocation
+        this.mapName = obj.data.mapName
+        this.startPos = obj.pos.startPos
+        this.startDire = obj.pos.startDire
+        this.settingID = obj.data.settingID
+
+        if(obj.data.enemySpriteKey != undefined){
+            this.enemySpriteKey = obj.data.enemySpriteKey
+            this.enemyAtrasLocation = obj.data.enemyAtlasLocation
+            this.enemySpriteLocation = obj.data.enemySpriteLocation
+        }
 
         this.z_key = this.input.keyboard.addKey('Z')
         this.x_key = this.input.keyboard.addKey('X')
@@ -50,6 +62,10 @@ export class DungeonMap extends Phaser.Scene {
             frameWidth: 52,
             frameHeight: 72,
         });
+        if(this.enemySpriteKey != undefined){
+            //this.load.image(this.enemySpriteKey, this.enemySpriteLocation)
+            this.load.atlas(this.enemySpriteKey, this.enemySpriteLocation,this.enemyAtrasLocation)
+        }
     }
     public create() {
         const FADE_TIME = 600;
@@ -113,8 +129,11 @@ export class DungeonMap extends Phaser.Scene {
         };
         //setup npc for this map
         this.settingNPC()
+        //setup enemy for this map
+        this.spawnEnemy()
         this.gridEngine.create(tilemap, this.gridEngineConfig);
         this.settingNPCMovement()
+        this.settingEnemyMovement()
         //set start direction for this map
         this.gridEngine.turnTowards("player",this.startDire)
         this.gridEngine.turnTowards("ally",this.startDire)
@@ -134,11 +153,19 @@ export class DungeonMap extends Phaser.Scene {
         })
         this.events.once('load-map',(dist: string, distPos: Position, distDire: Direction, scene: typeof Phaser.Scene = null)=>{
             this.loadMap(dist,distPos,distDire,scene)
+            
+            this.gridEngine.getAllCharacters().forEach(charID=>{
+                this.gridEngine.stopMovement(charID)
+            })
         })
         this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
             this.events.off('restet-facing-direction')
             this.events.off('fade-out')
             this.events.off('load-map')
+            this.cacheObj.forEach(obj =>{
+                obj.destroy()
+            })
+            this.cacheObj.length = 0
         })
     }
     //custom animation
@@ -250,7 +277,6 @@ export class DungeonMap extends Phaser.Scene {
                     walkingAnimationMapping: this.getRandomInt(0,7),
                     startPosition: {x: 12,y: 11},
                     charLayer: "playerField",
-                    //collisionTilePropertyName: "npc_cg",
                 });
                 //
                 const npcSpr2 = this.add.sprite(0,0,"player");
@@ -272,7 +298,7 @@ export class DungeonMap extends Phaser.Scene {
     }
     public pushCharacter(id: string,mapping: number,startPos: Position){
         const npcSpr = this.add.sprite(0,0,"player");
-        npcSpr.scale = 1.5;
+        npcSpr.scale = 1.5
         this.gridEngineConfig.characters.push({
             id: id,
             sprite: npcSpr,
@@ -280,6 +306,27 @@ export class DungeonMap extends Phaser.Scene {
             startPosition: startPos,
             charLayer: "playerField",
         });
+    }
+    public pushEnemy(id: string, frame: string, startPos: Position){
+        const sprite = this.textures.addSpriteSheetFromAtlas(id,{
+            atlas: this.enemySpriteKey,
+            frame: frame,
+            frameWidth: 32,
+            frameHeight: 32
+        })
+        const enemySpr = this.add.sprite(0,0,sprite)
+        enemySpr.scale = 1.5
+        this.gridEngineConfig.characters.push({
+            id: id,
+            sprite: enemySpr,
+            startPosition: startPos,
+            charLayer: "playerField",
+            collides:{
+                collisionGroups:['']
+            }
+        })
+        this.cacheObj.push(enemySpr)
+        this.cacheObj.push(sprite)
     }
     public settingNPCMovement(){
         switch(this.settingID){
@@ -289,6 +336,9 @@ export class DungeonMap extends Phaser.Scene {
             default:
                 break
         }
+    }
+    public settingEnemyMovement(){
+        //Override, and implement it.
     }
     public setMovementType(id: string, type?: string, span?: number, radius: number = 2){
         if (type == null){}
@@ -302,6 +352,9 @@ export class DungeonMap extends Phaser.Scene {
                     break
                 case 'radius':
                     this.gridEngine.moveRandomly(id,span,radius)
+                    break
+                case 'follow':
+                    this.gridEngine.follow(id,'player',-1)
                     break
                 default:
                     break
@@ -353,7 +406,8 @@ export class DungeonMap extends Phaser.Scene {
                 data: info
             }
             this.time.delayedCall(FADE_TIME, ()=>{
-                this.scene.remove("map")
+                this.scene.stop('map')
+                this.scene.remove('map')
                 this.scene.start('loading',object)
             })
         }

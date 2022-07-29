@@ -18,7 +18,7 @@ export class TestMap extends DungeonMap{
     }
 
     public override settingNPCMovement(): void {
-        super.setMovementType('npc','random')
+        super.setMovementType('npc','radius',2000,1)
     }
 
     public override mapTransition(): void {

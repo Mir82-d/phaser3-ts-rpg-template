@@ -134,6 +134,10 @@ export class MapMenu extends Phaser.Scene {
 
     commandHandler(command: Command){
         switch(command.commandID){
+            case 'exit':
+                eventCenter.emit("back-to-title")
+                this.scene.stop()
+                break
             case 'magic':
                 this.createMagicMenu()
                 this.time.delayedCall(300,()=>{

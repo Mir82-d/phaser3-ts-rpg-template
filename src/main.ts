@@ -13,8 +13,6 @@ import { LoadingScene } from "./scenes/LoadingScene";
 // Phaser3のゲームクラスの記述（Phaser.Gameクラスを継承したGameクラスの記述）
 export class Game extends Phaser.Game {
 
-    private game: Phaser.Game
-
     constructor(config: Phaser.Types.Core.GameConfig) {
         // Phaser.Gameクラスにコンフィグを渡す
         super(config);

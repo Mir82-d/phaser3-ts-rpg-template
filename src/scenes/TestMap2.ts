@@ -23,5 +23,12 @@ export class TestMap2 extends DungeonMap{
         super.setTransitionPoint({x: 14,y: 0},Direction.UP,'testMap',{x: 15,y: 21},Direction.UP,TestMap)
         super.setTransitionPoint({x: 14,y: 39},Direction.DOWN,'testMap',{x: 19,y: 9},Direction.DOWN,TestMap)
     }
-    
+
+    public override spawnEnemy(): void {
+        super.pushEnemy('enemy1','enemy_42',{x: 15,y: 15})
+    }
+
+    public override settingEnemyMovement(): void {
+        super.setMovementType('enemy1','follow')
+    }
 }
