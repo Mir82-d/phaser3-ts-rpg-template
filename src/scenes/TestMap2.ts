@@ -26,9 +26,11 @@ export class TestMap2 extends DungeonMap{
 
     public override spawnEnemy(): void {
         super.pushEnemy('enemy1','enemy_42',{x: 15,y: 15})
+        super.pushEnemy('enemy2','enemy_43',{x: 13,y: 15})
     }
 
     public override settingEnemyMovement(): void {
-        super.setMovementType('enemy1','follow')
+        super.setMovementType('enemy1','random')
+        super.setMovementType('enemy2','random')
     }
 }

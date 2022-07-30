@@ -1,10 +1,11 @@
-import { GridEngine, Position } from "grid-engine";
+import { GridEngine, MovementInfo, Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import eventCenter from "../util/EventCenter";
 import * as Phaser from "phaser";
 import { MapManager } from "./mapManager";
 import { GameConfig } from "../config";
 import { FileDBType, FileInfo } from "../type/fileDBType";
+import { MovementType, MTInfo} from "../type/MovementType";
 
 export class DungeonMap extends Phaser.Scene {
 
@@ -29,6 +30,8 @@ export class DungeonMap extends Phaser.Scene {
     private cacheObj: any[] = []
 
     private charIDs: string[] = []
+    private enemyIDs: string[] = []
+    private charMovement: MTInfo = {}
     private mapManager: MapManager
 
     public init(obj: {data: FileInfo, pos:{startPos: Position; startDire: Direction;} }){
@@ -141,10 +144,50 @@ export class DungeonMap extends Phaser.Scene {
         this.gridEngine.turnTowards("ally3",this.startDire)
         //start scene fade in
         camera.fadeIn(FADE_TIME)
+        //enemy follow player when approaching
+        this.gridEngine.positionChangeFinished()
+        .subscribe(({ charId, exitTile, enterTile }) =>{
+            //TODO
+            if(charId.includes("enemy")){
+                if(this.charMovement[charId] != MovementType.FOLLOW &&
+                    this.charMovement[charId] != MovementType.MOVETO)
+                    {
+                        let pos = this.gridEngine.getPosition('player')
+                        let distance = this.manhattanDist(pos.x,pos.y,exitTile.x,exitTile.y)
+                        //console.log(distance,this.charMovement[charId])
+                        if(distance < 9){
+                            this.charMovement[charId] = MovementType.FOLLOW
+                            this.gridEngine.follow(charId,'player',-1)
+                        }
+                    }
+                else if(this.charMovement[charId] == MovementType.FOLLOW ||
+                    this.charMovement[charId] == MovementType.MOVETO)
+                    {
+                        let pos = this.gridEngine.getPosition('player')
+                        let distance = this.manhattanDist(pos.x,pos.y,enterTile.x,enterTile.y)
+                        if(distance > 8){
+                            this.charMovement[charId] = MovementType.RANDOM
+                            this.gridEngine.moveRandomly(charId,this.getRandomInt(1000,2000))
+                        }
+                        else if(distance == 0){
+                            console.log("encounted!!!")
+                            this.symbolEncounter()
+                            //this.scene.pause()
+                        }
+                        //console.log(distance,this.charMovement[charId])
+                    }
+            }
+        })
+        //remember enemy ID
+        this.gridEngine.getAllCharacters().forEach(charID=>{
+            if(charID.includes("enemy")){
+                this.enemyIDs.push(charID)
+            }
+        })
         //events
         this.events.on("reset-facing-direction",(npcKey : string)=>{
             this.time.delayedCall(1200,()=>{
-                if(this.gridEngine.isMoving(npcKey)==false)
+                //if(this.gridEngine.isMoving(npcKey)==false)
                 this.gridEngine.turnTowards(npcKey,Direction.DOWN)
             })
         },this)
@@ -154,9 +197,13 @@ export class DungeonMap extends Phaser.Scene {
         this.events.once('load-map',(dist: string, distPos: Position, distDire: Direction, scene: typeof Phaser.Scene = null)=>{
             this.loadMap(dist,distPos,distDire,scene)
             
-            this.gridEngine.getAllCharacters().forEach(charID=>{
-                this.gridEngine.stopMovement(charID)
-            })
+            if(this.enemyIDs.length != 0){
+                this.enemyIDs.forEach(charId=>{
+                    this.gridEngine.stopMovement(charId)
+                })
+            }
+            this.enemyIDs.length = 0
+            this.charMovement = {}
         })
         this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
             this.events.off('restet-facing-direction')
@@ -214,7 +261,7 @@ export class DungeonMap extends Phaser.Scene {
         if(z){
             this.gridEngine.getCharactersAt(this.gridEngine.getFacingPosition("player"),"playerField").forEach( charID =>{
                 if(charID.includes("npc")){
-                    this.gridEngine.turnTowards(charID,this.reverseDirection(this.gridEngine.getFacingDirection("player")))
+                    this.gridEngine.turnTowards(charID,this.oppositeDirection(this.gridEngine.getFacingDirection("player")))
                     this.events.emit("reset-facing-direction",charID)
                     //this.scene.launch('talkingWindow',{ name: this.getName(charID), txt: this.getDialogue(charID)})
                     this.scene.launch('talkingWindow',{ timelineID: this.settingID+"_"+charID })
@@ -232,13 +279,14 @@ export class DungeonMap extends Phaser.Scene {
             this.scene.start("gameTest")
         }
         this.mapTransition()
+        //this.symbolEncounter()
     }
     private getRandomInt(min: number, max: number) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-    private reverseDirection(dire:Direction){
+    private oppositeDirection(dire:Direction){
         if(dire == Direction.DOWN){
             return Direction.UP;
         }
@@ -261,8 +309,9 @@ export class DungeonMap extends Phaser.Scene {
         }
         else return false
     }
+    //enemy settings(enemy id must be included "enemy" letter)
     public spawnEnemy(){
-        //TODO
+        //Override it
     }
     //npc settings(npc id must be included "npc" letter)
     public settingNPC(){
@@ -296,9 +345,9 @@ export class DungeonMap extends Phaser.Scene {
                 break
         }
     }
-    public pushCharacter(id: string,mapping: number,startPos: Position){
+    public pushCharacter(id: string,mapping: number,startPos: Position, scale = 1.5){
         const npcSpr = this.add.sprite(0,0,"player");
-        npcSpr.scale = 1.5
+        npcSpr.scale = scale
         this.gridEngineConfig.characters.push({
             id: id,
             sprite: npcSpr,
@@ -307,7 +356,7 @@ export class DungeonMap extends Phaser.Scene {
             charLayer: "playerField",
         });
     }
-    public pushEnemy(id: string, frame: string, startPos: Position){
+    public pushEnemy(id: string, frame: string, startPos: Position, scale = 3){
         const sprite = this.textures.addSpriteSheetFromAtlas(id,{
             atlas: this.enemySpriteKey,
             frame: frame,
@@ -315,14 +364,14 @@ export class DungeonMap extends Phaser.Scene {
             frameHeight: 32
         })
         const enemySpr = this.add.sprite(0,0,sprite)
-        enemySpr.scale = 1.5
+        enemySpr.scale = scale
         this.gridEngineConfig.characters.push({
             id: id,
             sprite: enemySpr,
             startPosition: startPos,
             charLayer: "playerField",
             collides:{
-                collisionGroups:['']
+                collisionGroups:['enemy']
             }
         })
         this.cacheObj.push(enemySpr)
@@ -340,7 +389,7 @@ export class DungeonMap extends Phaser.Scene {
     public settingEnemyMovement(){
         //Override, and implement it.
     }
-    public setMovementType(id: string, type?: string, span?: number, radius: number = 2){
+    public setMovementType(id: string, type?: string, radius: number = 2, speed: number = 4, span?: number){
         if (type == null){}
         else {
             if(span == null){
@@ -348,13 +397,19 @@ export class DungeonMap extends Phaser.Scene {
             }
             switch(type){
                 case 'random':
+                    this.gridEngine.setSpeed(id,speed)
                     this.gridEngine.moveRandomly(id,span)
+                    this.charMovement[id] = MovementType.RANDOM
                     break
                 case 'radius':
+                    this.gridEngine.setSpeed(id,speed)
                     this.gridEngine.moveRandomly(id,span,radius)
+                    this.charMovement[id] = MovementType.RADIUS
                     break
                 case 'follow':
+                    this.gridEngine.setSpeed(id,speed)
                     this.gridEngine.follow(id,'player',-1)
+                    this.charMovement[id] = MovementType.FOLLOW
                     break
                 default:
                     break
@@ -391,6 +446,9 @@ export class DungeonMap extends Phaser.Scene {
             //this.loadMap(dist,distPos,distDire,scene)
         }
     }
+    public getAreaID(){
+        return this.settingID
+    }
     private loadMap(mapKey:string,pos:Position,dire:Direction,nextScene?:typeof Phaser.Scene){
         const FADE_TIME = 600;
         this.events.emit('fade-out')
@@ -412,7 +470,14 @@ export class DungeonMap extends Phaser.Scene {
             })
         }
     }
-    public getAreaID(){
-        return this.settingID
+    private symbolEncounter(){
+        //TODO
+        this.enemyIDs.forEach(charId=>{
+            this.gridEngine.stopMovement(charId)
+        })
+        this.scene.pause()
+    }
+    private manhattanDist(x1: number, y1:number, x2: number, y2: number) {
+        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
     }
 }

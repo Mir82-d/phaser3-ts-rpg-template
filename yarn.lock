@@ -1067,11 +1067,11 @@ graceful-fs@^4.1.2, graceful-fs@^4.2.4, graceful-fs@^4.2.6, graceful-fs@^4.2.9:
   integrity sha512-NtNxqUcXgpW2iMrfqSfR73Glt39K+BLwWsPs94yR63v45T0Wbej7eRmL5cWfwEgqXnmjQp3zaJTshdRW/qC2ZQ==
 
 grid-engine@^2.16.0:
-  version "2.16.0"
-  resolved "https://registry.yarnpkg.com/grid-engine/-/grid-engine-2.16.0.tgz#4c67ad83a28b287a5ca4375a3f2540b872917858"
-  integrity sha512-TdoqT1DTIGx0wTXouxRjIQWPs0dd5RGxO4TPJf5GT3fCzyPIBXhh25ZEX9NOoTm7+nJHgUjYt1PhIbPjdVo2eg==
+  version "2.19.0"
+  resolved "https://registry.yarnpkg.com/grid-engine/-/grid-engine-2.19.0.tgz#b6ddcc32a5fb3e675c49f5564c921ffe9a27e80e"
+  integrity sha512-vKxV3b6OWm8GoaTn1lSr6l1JbijASoeLW+BOzYKHIDeYBEiCeN1OeAn9HS/+EVCN0DX5CzvWZG44sp9RZtoB6w==
   dependencies:
-    rxjs "^7.3.1"
+    rxjs "^7.5.5"
 
 handle-thing@^2.0.0:
   version "2.0.1"
@@ -1861,10 +1861,10 @@ run-parallel@^1.1.9:
   dependencies:
     queue-microtask "^1.2.2"
 
-rxjs@^7.3.1:
-  version "7.5.5"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.5.tgz#2ebad89af0f560f460ad5cc4213219e1f7dd4e9f"
-  integrity sha512-sy+H0pQofO95VDmFLzyaw9xNJU4KTRSwQIGM6+iG3SypAtCiLDzpeG8sJrNCWn2Up9km+KhkvTdbkrdy+yzZdw==
+rxjs@^7.5.5:
+  version "7.5.6"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.6.tgz#0446577557862afd6903517ce7cae79ecb9662bc"
+  integrity sha512-dnyv2/YsXhnm461G+R/Pe5bWP41Nm6LBXEYWI6eiFP4fiwx6WRI/CD0zbdVAudd9xwLEF2IDcKXLHit0FYjUzw==
   dependencies:
     tslib "^2.1.0"
 
