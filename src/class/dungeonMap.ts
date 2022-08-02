@@ -311,10 +311,11 @@ export class DungeonMap extends Phaser.Scene {
     }
     //enemy settings(enemy id must be included "enemy" letter)
     public spawnEnemy(){
-        //Override it
+        //Override and implement it
     }
     //npc settings(npc id must be included "npc" letter)
     public settingNPC(){
+        //Override and implement it
         switch(this.settingID){
             case "testMap":{
                 //NPC
@@ -378,6 +379,7 @@ export class DungeonMap extends Phaser.Scene {
         this.cacheObj.push(sprite)
     }
     public settingNPCMovement(){
+        //Override and implement it
         switch(this.settingID){
             case "testMap":{
                 this.gridEngine.moveRandomly("npc",this.getRandomInt(1000,2000));
@@ -387,7 +389,7 @@ export class DungeonMap extends Phaser.Scene {
         }
     }
     public settingEnemyMovement(){
-        //Override, and implement it.
+        //Override and implement it
     }
     public setMovementType(id: string, type?: string, radius: number = 2, speed: number = 4, span?: number){
         if (type == null){}
@@ -418,6 +420,7 @@ export class DungeonMap extends Phaser.Scene {
     }
     //setting area transition point
     public mapTransition(){
+        //Override and implement it
         switch(this.settingID){
             case "testMap":{
                 if(this.isFacing({x: 19,y: 9},Direction.UP))
@@ -471,11 +474,13 @@ export class DungeonMap extends Phaser.Scene {
         }
     }
     private symbolEncounter(){
-        //TODO
         this.enemyIDs.forEach(charId=>{
             this.gridEngine.stopMovement(charId)
         })
+        //TODO
+        //BattleSceneに情報を渡す
         this.scene.pause()
+        //this.scene.launch('battleScene')
     }
     private manhattanDist(x1: number, y1:number, x2: number, y2: number) {
         return Math.abs(x1 - x2) + Math.abs(y1 - y2);

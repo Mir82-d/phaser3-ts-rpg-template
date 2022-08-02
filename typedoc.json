@@ -1,0 +1,4 @@
+{
+    "entryPoints": ["src/main.ts","src/class/*.ts","src/data/*.ts","src/objets/*.ts","src/scenes/*.ts","src/type/*.ts","src/util/*.ts"],
+    "out": "docs"
+}

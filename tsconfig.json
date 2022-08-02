@@ -3,7 +3,10 @@
     "target": "ES6",
     "module": "CommonJS",
     "moduleResolution": "node",
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "preserveConstEnums": true,
+    "removeComments": false,
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
