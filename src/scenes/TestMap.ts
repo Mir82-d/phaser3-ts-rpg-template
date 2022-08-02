@@ -3,6 +3,7 @@ import * as Phaser from "phaser";
 import { GameConfig } from "../config";
 import { DungeonMap } from "../class/dungeonMap";
 import { TestMap2 } from "./TestMap2";
+import { MovementType } from "../type/MovementType";
 
 export class TestMap extends DungeonMap{
 
@@ -18,7 +19,7 @@ export class TestMap extends DungeonMap{
     }
 
     public override settingNPCMovement(): void {
-        super.setMovementType('npc','radius',1)
+        super.setMovementType('npc',MovementType.RADIUS,1)
     }
 
     public override mapTransition(): void {

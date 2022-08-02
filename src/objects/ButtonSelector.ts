@@ -1,6 +1,11 @@
 import * as Phaser from "phaser";
-import eventCenter from "../util/EventCenter";
 
+/**
+ * Config of ButtonSelector
+ * @param enableArrow whether to turn on the pointer
+ * @param enableTint whether to accept input
+ * @param depth the depth of ButtonSelector
+ */
 export type ButtonSelectorConfig = {
     enableArrow: boolean,
     enableTint: boolean,
@@ -29,6 +34,11 @@ export class ButtonSelector extends Phaser.GameObjects.Container{
         }
     }
 
+    /**
+     * Select the button.
+     * @param index index of the selected button
+     * @param buttonsArray the array of buttons
+     */
     public selectButton(index: number,buttonsArray: any) {
         const currentButton = buttonsArray[this.selectedButtonIndex]
         const button = buttonsArray[index]
@@ -51,6 +61,11 @@ export class ButtonSelector extends Phaser.GameObjects.Container{
 	    this.selectedButtonIndex = index
     }
 
+    /**
+     * Select nex button.
+     * @param change number of indices to change
+     * @param buttonsArray the array of buttons
+     */
     public selectNextButton(change = 1,buttonsArray: any) {
         let index = this.selectedButtonIndex + change
 
@@ -62,7 +77,10 @@ export class ButtonSelector extends Phaser.GameObjects.Container{
         }
         this.selectButton(index,buttonsArray)
     }
-
+    /**
+     * Confirm the button selection.
+     * @param buttonsArray the array of buttons
+     */
     public confirmSelection(buttonsArray: any) {
         // get the currently selected button
 	    const button = buttonsArray[this.selectedButtonIndex]
@@ -70,7 +88,10 @@ export class ButtonSelector extends Phaser.GameObjects.Container{
         // emit the 'selected' event
 	    button.emit('selected',this.selectedButtonIndex)
     }
-    
+    /**
+     * Get the selected button index.
+     * @returns selected button index
+     */
     public getSelectedIndex(){
         return this.selectedButtonIndex
     }

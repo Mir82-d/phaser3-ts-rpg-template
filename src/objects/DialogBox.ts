@@ -1,5 +1,15 @@
 import * as Phaser from "phaser";
 
+/**
+ * The config of DialogBox.
+ * @param x coordinate of x
+ * @param y coordinate of y
+ * @param width width of the dialog box
+ * @param height height of the dialog box
+ * @param padding padding
+ * @param margin margin
+ * @param textStyle Phaser.Types.GameObjects.Text.TextStyle
+ */
 export type DialogBoxConfig = {
     x: number,
     y: number,
@@ -51,15 +61,26 @@ export class DialogBox extends Phaser.GameObjects.Container {
         this.padding = padding
         this.isReady = false
     }
-    //set the dialog text
+    /**
+     * Set the dialog text
+     * @param text dialog u want to display (NO animation)
+     */
     public setText(text: string){
         this.text.setText(text)
     }
-    //get currently displayed text
+    /**
+     * Get currently displayed text
+     * @returns string of text
+     */
     public getText(){
         return this.text.text
     }
     //text typewriter param:txt continuity:boolean (whether to connect letters)
+    /**
+     * Set the dialog text with typewriter animation
+     * @param txt string text
+     * @param continuity whether to connect letters
+     */
     public typewriteText(txt : string,continuity: boolean){
         if(!continuity){
             this.text.setText("")
@@ -83,7 +104,10 @@ export class DialogBox extends Phaser.GameObjects.Container {
         })
     }
 
-    //set the name text
+    /**
+     * Set the character name text.
+     * @param name character name
+     */
     public setCharNameText(name: string){
         this.charNameTxt.setText(name)
 
@@ -96,12 +120,17 @@ export class DialogBox extends Phaser.GameObjects.Container {
         this.charNameTxt.setVisible(true)
         this.charNameBox.setVisible(true)
     }
-
+    /**
+     * Clear the character name text box.
+     */
     public clearCharNameText(){
         this.charNameBox.setVisible(false)
         this.charNameTxt.setVisible(false)
     }
-    //when callback event finished, it returns true
+    /**
+     * When callback event finished, it returns true
+     * @returns is ready to the next dialog : boolean
+     */
     public isReadyToNext(){
         return this.isReady
     }

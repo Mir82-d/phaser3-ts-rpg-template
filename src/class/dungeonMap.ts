@@ -215,7 +215,12 @@ export class DungeonMap extends Phaser.Scene {
             this.cacheObj.length = 0
         })
     }
-    //custom animation
+    /**
+     * Create player custom animation (WIP)
+     * @param name 
+     * @param startFrame 
+     * @param endFrame 
+     */
     public createPlayerAnimation(name:string, startFrame:number, endFrame:number) {
         this.anims.create({
           key: name,
@@ -309,11 +314,17 @@ export class DungeonMap extends Phaser.Scene {
         }
         else return false
     }
-    //enemy settings(enemy id must be included "enemy" letter)
+    /**
+     * Enemy settings(enemy id must be included "enemy" letter)
+     * Override and implement it.
+     */
     public spawnEnemy(){
         //Override and implement it
     }
-    //npc settings(npc id must be included "npc" letter)
+    /**
+     * Npc settings(npc id must be included "npc" letter)
+     * Override and implement it.
+     */
     public settingNPC(){
         //Override and implement it
         switch(this.settingID){
@@ -346,6 +357,13 @@ export class DungeonMap extends Phaser.Scene {
                 break
         }
     }
+    /**
+     * Add character(NPC) to the map.
+     * @param id NPC id
+     * @param mapping number of animation mapping
+     * @param startPos start position (ex.{x:99,y:99})
+     * @param scale number of scale
+     */
     public pushCharacter(id: string,mapping: number,startPos: Position, scale = 1.5){
         const npcSpr = this.add.sprite(0,0,"player");
         npcSpr.scale = scale
@@ -357,6 +375,13 @@ export class DungeonMap extends Phaser.Scene {
             charLayer: "playerField",
         });
     }
+    /**
+     * Add enemy to the map.
+     * @param id enemy id
+     * @param frame the name of atlas frame
+     * @param startPos start position (ex.{x:99,y:99})
+     * @param scale number of scale
+     */
     public pushEnemy(id: string, frame: string, startPos: Position, scale = 3){
         const sprite = this.textures.addSpriteSheetFromAtlas(id,{
             atlas: this.enemySpriteKey,
@@ -378,6 +403,10 @@ export class DungeonMap extends Phaser.Scene {
         this.cacheObj.push(enemySpr)
         this.cacheObj.push(sprite)
     }
+    /**
+     * Setting NPC movement type.
+     * Override and implement it.
+     */
     public settingNPCMovement(){
         //Override and implement it
         switch(this.settingID){
@@ -388,10 +417,22 @@ export class DungeonMap extends Phaser.Scene {
                 break
         }
     }
+    /**
+     * Setting enemy movement type.
+     * Override and implement it.
+     */
     public settingEnemyMovement(){
         //Override and implement it
     }
-    public setMovementType(id: string, type?: string, radius: number = 2, speed: number = 4, span?: number){
+    /**
+     * Set the movement type of enemy.
+     * @param id character id
+     * @param type movement type (ex. MovementType.RANDOM)
+     * @param radius character movement range
+     * @param speed walking speed
+     * @param span time interval of moving
+     */
+    public setMovementType(id: string, type?: MovementType, radius: number = 2, speed: number = 4, span?: number){
         if (type == null){}
         else {
             if(span == null){
@@ -418,9 +459,10 @@ export class DungeonMap extends Phaser.Scene {
             }
         }
     }
-    //setting area transition point
+    /**
+     * Setting area transition point. Override and implement it.
+     */
     public mapTransition(){
-        //Override and implement it
         switch(this.settingID){
             case "testMap":{
                 if(this.isFacing({x: 19,y: 9},Direction.UP))
@@ -442,6 +484,15 @@ export class DungeonMap extends Phaser.Scene {
                 break
         }
     }
+    /**
+     * Add map transition point.
+     * @param fromPos transition start point
+     * @param fromDire transition start direction
+     * @param dist id of destination map
+     * @param distPos posirion of destination map
+     * @param distDire direction of destination map
+     * @param scene destination map class (Phaser.Scene)
+     */
     public setTransitionPoint(fromPos: Position, fromDire: Direction, dist: string, distPos: Position, distDire: Direction, scene: typeof Phaser.Scene = null){
         if(this.isFacing(fromPos,fromDire))
         {
@@ -449,6 +500,10 @@ export class DungeonMap extends Phaser.Scene {
             //this.loadMap(dist,distPos,distDire,scene)
         }
     }
+    /**
+     * Get current area(setting) ID. 
+     * @returns setting ID
+     */
     public getAreaID(){
         return this.settingID
     }

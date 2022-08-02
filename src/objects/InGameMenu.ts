@@ -2,7 +2,16 @@ import * as Phaser from "phaser";
 import { Command } from "../type/Choice";
 import eventCenter from "../util/EventCenter";
 import { ButtonSelector, ButtonSelectorConfig } from "./ButtonSelector";
-
+/**
+ * The config of InGameMenu.
+ * @param x coordinate of x
+ * @param y coordinate of y
+ * @param line the number of lines
+ * @param column the number of columns
+ * @param padding padding
+ * @param margin margin
+ * @param textStyle Phaser.Types.GameObjects.Text.TextStyle
+ */
 export type InGameMenuConfig = {
     x: number,
     y: number,
@@ -45,7 +54,12 @@ export class InGameMenu extends Phaser.GameObjects.Container{
         this.padding = padding
         this.textStyle = textStyle
     }
-
+    /**
+     * Set up the In-Game-Menu.
+     * @param commands the array of commands
+     * @param enableInput whether to accept input 
+     * @param name the display name of menu
+     */
     public setupMenu(commands: Command[],enableInput = false, name?: string){
         if(commands.length === 0){
             return
@@ -154,6 +168,13 @@ export class InGameMenu extends Phaser.GameObjects.Container{
             eventCenter.off('return')
         })
     }
+    /**
+     * Re-Set up the InGameMenu.
+     * @param commands the array of commands
+     * @param enableInput whether to accept input
+     * @param name the display name of menu
+     * @returns 
+     */
     public resetMenu(commands: Command[],enableInput = false, name?: string){
         if(commands.length === 0){
             return
@@ -175,6 +196,9 @@ export class InGameMenu extends Phaser.GameObjects.Container{
     public getButtons(){
         return this.buttons
     }
+    /**
+     * Disable input of the InGameMenu.
+     */
     public disableInput(){
         this.z_key.off('down')
         this.cursors.up.off('down')
@@ -186,6 +210,9 @@ export class InGameMenu extends Phaser.GameObjects.Container{
             this.bs.destroy()
         }
     }
+    /**
+     * Enable input of the InGameMenu.
+     */
     public enableInput(){
         this.setupButtonSelector()
     }

@@ -3,6 +3,7 @@ import * as Phaser from "phaser";
 import { GameConfig } from "../config";
 import { DungeonMap } from "../class/dungeonMap";
 import { TestMap } from "./TestMap";
+import { MovementType } from "../type/MovementType";
 
 export class TestMap2 extends DungeonMap{
 
@@ -30,7 +31,7 @@ export class TestMap2 extends DungeonMap{
     }
 
     public override settingEnemyMovement(): void {
-        super.setMovementType('enemy1','random')
-        super.setMovementType('enemy2','random')
+        super.setMovementType('enemy1',MovementType.RANDOM)
+        super.setMovementType('enemy2',MovementType.RANDOM)
     }
 }

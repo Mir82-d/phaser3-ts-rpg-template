@@ -32,7 +32,10 @@ export class DialogPlayer {
         this.up_key = scene.input.keyboard.addKey('up')
         this.down_key = scene.input.keyboard.addKey('down')
     }
-
+    /**
+     * Display dialog and start talking.
+     * @param timeline the dialog timeline
+     */
     public start(timeline: Timeline){
         this.timeline = timeline
         this.next()

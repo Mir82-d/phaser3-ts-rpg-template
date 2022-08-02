@@ -35,13 +35,21 @@ export class MapManager extends Phaser.Scene{
             eventCenter.off("back-to-title")
         })
     }
-
-    loadMap(){
+    /**
+     * 初回のみマップを読み込む関数
+     */
+    private loadMap(){
         this.scene.add("map", this.startScene, false);
         this.scene.launch("map",this.getDataInfo(this.mapKey,this.startPosition,this.startDirection))
     }
-    //マップを読み込むときの情報を渡す
-    getDataInfo(mapKey: string, startPosition: Position, startDirection: Direction){
+    /**
+     * Get information of filepass, position and direction.
+     * マップを読み込むときの情報を取り出す
+     * @param mapKey 
+     * @param startPosition 
+     * @param startDirection 
+     */
+    public getDataInfo(mapKey: string, startPosition: Position, startDirection: Direction){
         let fileInfo = fileDB[mapKey]
         return {
             data:fileInfo,
