@@ -2,9 +2,9 @@ import * as Phaser from "phaser";
 
 /**
  * Config of ButtonSelector
- * @param enableArrow whether to turn on the pointer
- * @param enableTint whether to accept input
- * @param depth the depth of ButtonSelector
+ * @enableArrow whether to turn on the pointer
+ * @enableTint whether to accept input
+ * @depth the depth of ButtonSelector
  */
 export type ButtonSelectorConfig = {
     enableArrow: boolean,

@@ -4,13 +4,13 @@ import eventCenter from "../util/EventCenter";
 import { ButtonSelector, ButtonSelectorConfig } from "./ButtonSelector";
 /**
  * The config of InGameMenu.
- * @param x coordinate of x
- * @param y coordinate of y
- * @param line the number of lines
- * @param column the number of columns
- * @param padding padding
- * @param margin margin
- * @param textStyle Phaser.Types.GameObjects.Text.TextStyle
+ * @x coordinate of x
+ * @y coordinate of y
+ * @line the number of lines
+ * @column the number of columns
+ * @padding padding
+ * @margin margin
+ * @textStyle Phaser.Types.GameObjects.Text.TextStyle
  */
 export type InGameMenuConfig = {
     x: number,

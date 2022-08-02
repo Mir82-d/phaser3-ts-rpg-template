@@ -2,13 +2,13 @@ import * as Phaser from "phaser";
 
 /**
  * The config of DialogBox.
- * @param x coordinate of x
- * @param y coordinate of y
- * @param width width of the dialog box
- * @param height height of the dialog box
- * @param padding padding
- * @param margin margin
- * @param textStyle Phaser.Types.GameObjects.Text.TextStyle
+ * @x coordinate of x
+ * @y coordinate of y
+ * @width width of the dialog box
+ * @height height of the dialog box
+ * @padding padding
+ * @margin margin
+ * @textStyle Phaser.Types.GameObjects.Text.TextStyle
  */
 export type DialogBoxConfig = {
     x: number,
