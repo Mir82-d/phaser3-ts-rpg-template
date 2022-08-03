@@ -1,7 +1,5 @@
 import * as Phaser from "phaser";
-import { GameConfig } from "../config";
 import { commandDatabase } from "../data/commandDB";
-import { sceneManager } from "../main";
 import { InGameMenu, InGameMenuConfig } from "../objects/InGameMenu"
 import { Command } from "../type/Choice";
 import { CommandDataBaseType } from "../type/CommandDataBaseType";

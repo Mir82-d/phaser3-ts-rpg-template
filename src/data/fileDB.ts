@@ -19,5 +19,5 @@ export const fileDB: FileDBType = {
         enemyAtlasLocation:"assets/img/enemy_atlas.json",
         enemySpriteKey:"enemies1",
         enemySpriteLocation:"assets/img/enemy.png"
-    }
+    },
 }
