@@ -1002,9 +1002,9 @@ graceful-fs@^4.1.2, graceful-fs@^4.2.4, graceful-fs@^4.2.6, graceful-fs@^4.2.9:
   integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
 
 grid-engine@^2.19.1:
-  version "2.19.1"
-  resolved "https://registry.yarnpkg.com/grid-engine/-/grid-engine-2.19.1.tgz#6790b3e4d99218c88a1bf35db9bce6af37526ce3"
-  integrity sha512-qoxte/pjooFlgQKwCbKUxN8vRKQgy3jfr6lycob/2FS0oO0jKXW4iXLPMbAd6lc3VEWxcvZXRb0n6yRvD4XAbA==
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/grid-engine/-/grid-engine-2.20.0.tgz#486eadfa09d0ab325b5139bfe9e140ca48e75b5c"
+  integrity sha512-RabQbbMgPU+bmlfGiGP7Vvsu4rFe5ePFANDn/QZ3qx/i6S5T6oZYZ2MC4Hm0acmum0oOknYqD8r0KaR5OD6Pcw==
   dependencies:
     rxjs "^7.5.5"
 

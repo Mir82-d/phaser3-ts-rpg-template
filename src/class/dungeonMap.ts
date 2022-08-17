@@ -149,8 +149,7 @@ export class DungeonMap extends Phaser.Scene {
         .subscribe(({ charId, exitTile, enterTile }) =>{
             //TODO
             if(charId.includes("enemy")){
-                if(this.charMovement[charId] != MovementType.FOLLOW &&
-                    this.charMovement[charId] != MovementType.MOVETO)
+                if(this.charMovement[charId] != MovementType.FOLLOW)
                     {
                         let pos = this.gridEngine.getPosition('player')
                         let distance = this.manhattanDist(pos.x,pos.y,exitTile.x,exitTile.y)
@@ -160,8 +159,7 @@ export class DungeonMap extends Phaser.Scene {
                             this.gridEngine.follow(charId,'player',-1)
                         }
                     }
-                else if(this.charMovement[charId] == MovementType.FOLLOW ||
-                    this.charMovement[charId] == MovementType.MOVETO)
+                else if(this.charMovement[charId] == MovementType.FOLLOW)
                     {
                         let pos = this.gridEngine.getPosition('player')
                         let distance = this.manhattanDist(pos.x,pos.y,enterTile.x,enterTile.y)
@@ -171,7 +169,7 @@ export class DungeonMap extends Phaser.Scene {
                         }
                         else if(distance == 0){
                             console.log("encounted!!!")
-                            this.symbolEncounter()
+                            this.symbolEncounter(this.gridEngine.getLabels(charId),charId)
                             //this.scene.pause()
                         }
                         //console.log(distance,this.charMovement[charId])
@@ -191,6 +189,13 @@ export class DungeonMap extends Phaser.Scene {
                 this.gridEngine.turnTowards(npcKey,Direction.DOWN)
             })
         },this)
+        this.events.on('resume',(scene:this, data: {flag: string; enemyID: string})=>{
+            //console.log(data)
+            this.time.delayedCall(400,()=>{
+                this.scene.bringToTop()
+            })
+            this.resumeHandler(data)
+        })
         this.events.once("fade-out",()=>{
             camera.fadeOut(FADE_TIME)
         })
@@ -284,7 +289,6 @@ export class DungeonMap extends Phaser.Scene {
             this.scene.start("gameTest")
         }
         this.mapTransition()
-        //this.symbolEncounter()
     }
     private getRandomInt(min: number, max: number) {
         min = Math.ceil(min);
@@ -377,13 +381,13 @@ export class DungeonMap extends Phaser.Scene {
     }
     /**
      * Add enemy to the map.
-     * @param id enemy id
+     * @param id enemy id (id.map: Enemy ID on the map id.db: Enemy ID in the database)
      * @param frame the name of atlas frame
      * @param startPos start position (ex.{x:99,y:99})
      * @param scale number of scale
      */
-    public pushEnemy(id: string, frame: string, startPos: Position, scale = 3){
-        const sprite = this.textures.addSpriteSheetFromAtlas(id,{
+    public pushEnemy(id: {map:string; db:string}, frame: string, startPos: Position, scale = 3){
+        const sprite = this.textures.addSpriteSheetFromAtlas(id.map,{
             atlas: this.enemySpriteKey,
             frame: frame,
             frameWidth: 32,
@@ -392,13 +396,14 @@ export class DungeonMap extends Phaser.Scene {
         const enemySpr = this.add.sprite(0,0,sprite)
         enemySpr.scale = scale
         this.gridEngineConfig.characters.push({
-            id: id,
+            id: id.map,
             sprite: enemySpr,
             startPosition: startPos,
             charLayer: "playerField",
             collides:{
                 collisionGroups:['enemy']
-            }
+            },
+            labels: [id.db, frame]
         })
         this.cacheObj.push(enemySpr)
         this.cacheObj.push(sprite)
@@ -528,14 +533,61 @@ export class DungeonMap extends Phaser.Scene {
             })
         }
     }
-    private symbolEncounter(){
+    /**
+     * Symbol encounter.
+     * @param info 
+     * @param id_map 
+     */
+    private symbolEncounter(info: string[],id_map: string){
         this.enemyIDs.forEach(charId=>{
             this.gridEngine.stopMovement(charId)
         })
         //TODO
-        //BattleSceneに情報を渡す
+        console.log('dbID: '+info[0]+' frame: '+info[1])
+        //BattleSceneに情報を渡して戦闘開始イベント発火（このイベントはMapManagerで定義している）
+        eventCenter.emit("start-battle",{id: info[0],frame: info[1],id_map: id_map, spriteKey: this.enemySpriteKey})
         this.scene.pause()
-        //this.scene.launch('battleScene')
+    }
+    /**
+     * Excecute this function when resume 'map' scene
+     * @param data 
+     * @returns 
+     */
+    private resumeHandler(data: {flag: string; enemyID: string}){
+        if(data == undefined){
+            return
+        }
+        else{
+            switch(data.flag){
+                case 'win':
+                    this.gridEngine.getSprite(data.enemyID).destroy()
+                    this.gridEngine.removeCharacter(data.enemyID)
+                    this.enemyIDs = this.enemyIDs.filter(v => v!= data.enemyID)
+                    //console.log(this.enemyIDs)
+                    this.enemyIDs.forEach( id =>{
+                        this.gridEngine.getSprite(id).alpha = 0.5
+                    })
+                    this.time.delayedCall(4000,()=>{
+                        this.enemyIDs.forEach( id =>{
+                            this.gridEngine.getSprite(id).alpha = 1
+                            this.gridEngine.moveRandomly(id)
+                        })
+                    })
+                    break
+                case 'escape':
+                    this.enemyIDs.forEach( id =>{
+                        this.gridEngine.getSprite(id).alpha = 0.5
+                    })
+                    this.time.delayedCall(4000,()=>{
+                        this.enemyIDs.forEach( id =>{
+                            this.gridEngine.getSprite(id).alpha = 1
+                            this.gridEngine.moveRandomly(id)
+                        })
+                    })
+                default:
+                    break
+            }
+        }
     }
     private manhattanDist(x1: number, y1:number, x2: number, y2: number) {
         return Math.abs(x1 - x2) + Math.abs(y1 - y2);

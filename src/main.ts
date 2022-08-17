@@ -9,6 +9,7 @@ import { MapMenu } from "./util/MapMenu";
 import { BattleMenu } from "./util/BattleMenu";
 import { MenuTest } from "./util/MenuTest";
 import { LoadingScene } from "./scenes/LoadingScene";
+import { BattleScene } from "./scenes/BattleScene";
 
 // Phaser3のゲームクラスの記述（Phaser.Gameクラスを継承したGameクラスの記述）
 export class Game extends Phaser.Game {
@@ -18,10 +19,11 @@ export class Game extends Phaser.Game {
         super(config);
 
         // シーンにキーを割り振って登録
-        this.scene.add("start", Start, false)
+        //this.scene.add("start", Start, false)
         this.scene.add("gameTest", GameTest, false)
         this.scene.add("mapManager",MapManager,false)
         this.scene.add("titleMenu",TitleMenu,false)
+        this.scene.add("battleScene",BattleScene,false)
 
         //util
         this.scene.add("talkingWindow",TalkingWindow,false)
