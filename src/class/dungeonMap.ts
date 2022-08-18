@@ -31,7 +31,6 @@ export class DungeonMap extends Phaser.Scene {
 
     private charIDs: string[] = []
     private enemyIDs: string[] = []
-    private charMovement: MTInfo = {}
     private mapManager: MapManager
 
     public init(obj: {data: FileInfo, pos:{startPos: Position; startDire: Direction;} }){
@@ -149,30 +148,26 @@ export class DungeonMap extends Phaser.Scene {
         .subscribe(({ charId, exitTile, enterTile }) =>{
             //TODO
             if(charId.includes("enemy")){
-                if(this.charMovement[charId] != MovementType.FOLLOW)
+                //console.log(charId,this.gridEngine.getMovement(charId).type)
+                if(this.gridEngine.getMovement(charId).type != 'Follow' && this.gridEngine.getMovement(charId).type != 'None')
                     {
                         let pos = this.gridEngine.getPosition('player')
                         let distance = this.manhattanDist(pos.x,pos.y,exitTile.x,exitTile.y)
-                        //console.log(distance,this.charMovement[charId])
                         if(distance < 9){
-                            this.charMovement[charId] = MovementType.FOLLOW
                             this.gridEngine.follow(charId,'player',-1)
                         }
                     }
-                else if(this.charMovement[charId] == MovementType.FOLLOW)
+                else if(this.gridEngine.getMovement(charId).type == 'Follow' && this.gridEngine.getMovement(charId).type != 'None')
                     {
                         let pos = this.gridEngine.getPosition('player')
                         let distance = this.manhattanDist(pos.x,pos.y,enterTile.x,enterTile.y)
                         if(distance > 8){
-                            this.charMovement[charId] = MovementType.RANDOM
                             this.gridEngine.moveRandomly(charId,this.getRandomInt(1000,2000))
                         }
                         else if(distance == 0){
-                            console.log("encounted!!!")
                             this.symbolEncounter(this.gridEngine.getLabels(charId),charId)
-                            //this.scene.pause()
                         }
-                        //console.log(distance,this.charMovement[charId])
+                        //console.log(distance)
                     }
             }
         })
@@ -208,7 +203,6 @@ export class DungeonMap extends Phaser.Scene {
                 })
             }
             this.enemyIDs.length = 0
-            this.charMovement = {}
         })
         this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
             this.events.off('restet-facing-direction')
@@ -447,17 +441,14 @@ export class DungeonMap extends Phaser.Scene {
                 case 'random':
                     this.gridEngine.setSpeed(id,speed)
                     this.gridEngine.moveRandomly(id,span)
-                    this.charMovement[id] = MovementType.RANDOM
                     break
                 case 'radius':
                     this.gridEngine.setSpeed(id,speed)
                     this.gridEngine.moveRandomly(id,span,radius)
-                    this.charMovement[id] = MovementType.RADIUS
                     break
                 case 'follow':
                     this.gridEngine.setSpeed(id,speed)
                     this.gridEngine.follow(id,'player',-1)
-                    this.charMovement[id] = MovementType.FOLLOW
                     break
                 default:
                     break
@@ -566,6 +557,7 @@ export class DungeonMap extends Phaser.Scene {
                     //console.log(this.enemyIDs)
                     this.enemyIDs.forEach( id =>{
                         this.gridEngine.getSprite(id).alpha = 0.5
+                        this.gridEngine.stopMovement(id)
                     })
                     this.time.delayedCall(4000,()=>{
                         this.enemyIDs.forEach( id =>{
@@ -575,8 +567,10 @@ export class DungeonMap extends Phaser.Scene {
                     })
                     break
                 case 'escape':
+                    this.gridEngine.stopMovement(data.enemyID)
                     this.enemyIDs.forEach( id =>{
                         this.gridEngine.getSprite(id).alpha = 0.5
+                        this.gridEngine.stopMovement(id)
                     })
                     this.time.delayedCall(4000,()=>{
                         this.enemyIDs.forEach( id =>{

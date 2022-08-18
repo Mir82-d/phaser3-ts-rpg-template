@@ -48,12 +48,12 @@ export class MapManager extends Phaser.Scene{
             })
         })
         //戦闘回避イベント
-        eventCenter.on("battle-escape",()=>{
+        eventCenter.on("battle-escape",(id_map: string)=>{
             this.scene.bringToTop()
             this.cameras.main.fadeOut(400)
             this.time.delayedCall(600,()=>{
                 this.scene.stop('battleScene')
-                this.scene.resume('map',{flag: 'escape'})
+                this.scene.resume('map',{flag: 'escape',enemyID: id_map})
                 this.cameras.main.fadeIn(400)
             })
         })

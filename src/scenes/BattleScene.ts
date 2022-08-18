@@ -103,7 +103,7 @@ export class BattleScene extends Phaser.Scene {
             eventCenter.emit('battle-win',this.enemyID)
         }
         else if(x){
-            eventCenter.emit('battle-escape')
+            eventCenter.emit('battle-escape',this.enemyID)
         }
     }
 
