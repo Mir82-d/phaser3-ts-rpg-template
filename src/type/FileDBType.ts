@@ -20,6 +20,8 @@ export type FileInfo = {
     enemyAtlasLocation?: string,
     mapName: string,
     settingID: string,
+    bgmLocation?: string,
+    bgmID?: string,
 }
 
 export type FileDBType = {

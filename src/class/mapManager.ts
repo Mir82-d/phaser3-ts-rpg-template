@@ -59,6 +59,8 @@ export class MapManager extends Phaser.Scene{
         })
         this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
             eventCenter.off("back-to-title")
+            eventCenter.off("battle-win")
+            eventCenter.off("battle-escape")
         })
     }
     /**

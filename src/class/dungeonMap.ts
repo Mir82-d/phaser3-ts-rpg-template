@@ -1,4 +1,4 @@
-import { GridEngine, MovementInfo, Position } from "grid-engine";
+import { GridEngine, MovementInfo, NumberOfDirections, Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import eventCenter from "../util/EventCenter";
 import * as Phaser from "phaser";
@@ -127,7 +127,7 @@ export class DungeonMap extends Phaser.Scene {
                     collides: false,
                 },
             ],
-            numberOfDirections: 8,
+            numberOfDirections: NumberOfDirections.EIGHT
         };
         //setup npc for this map
         this.settingNPC()
@@ -149,7 +149,8 @@ export class DungeonMap extends Phaser.Scene {
             //TODO
             if(charId.includes("enemy")){
                 //console.log(charId,this.gridEngine.getMovement(charId).type)
-                if(this.gridEngine.getMovement(charId).type != 'Follow' && this.gridEngine.getMovement(charId).type != 'None')
+                let movementInfo = this.gridEngine.getMovement(charId).type
+                if(movementInfo != 'Follow' && movementInfo != 'None')
                     {
                         let pos = this.gridEngine.getPosition('player')
                         let distance = this.manhattanDist(pos.x,pos.y,exitTile.x,exitTile.y)
@@ -157,7 +158,7 @@ export class DungeonMap extends Phaser.Scene {
                             this.gridEngine.follow(charId,'player',-1)
                         }
                     }
-                else if(this.gridEngine.getMovement(charId).type == 'Follow' && this.gridEngine.getMovement(charId).type != 'None')
+                else if(movementInfo == 'Follow')
                     {
                         let pos = this.gridEngine.getPosition('player')
                         let distance = this.manhattanDist(pos.x,pos.y,enterTile.x,enterTile.y)
@@ -557,7 +558,7 @@ export class DungeonMap extends Phaser.Scene {
                     //console.log(this.enemyIDs)
                     this.enemyIDs.forEach( id =>{
                         this.gridEngine.getSprite(id).alpha = 0.5
-                        this.gridEngine.stopMovement(id)
+                        //this.gridEngine.stopMovement(id)
                     })
                     this.time.delayedCall(4000,()=>{
                         this.enemyIDs.forEach( id =>{
@@ -567,10 +568,10 @@ export class DungeonMap extends Phaser.Scene {
                     })
                     break
                 case 'escape':
-                    this.gridEngine.stopMovement(data.enemyID)
+                    //this.gridEngine.stopMovement(data.enemyID)
                     this.enemyIDs.forEach( id =>{
                         this.gridEngine.getSprite(id).alpha = 0.5
-                        this.gridEngine.stopMovement(id)
+                        //this.gridEngine.stopMovement(id)
                     })
                     this.time.delayedCall(4000,()=>{
                         this.enemyIDs.forEach( id =>{

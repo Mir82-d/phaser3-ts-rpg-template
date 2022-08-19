@@ -17,7 +17,8 @@ export class BattleScene extends Phaser.Scene {
     private allyTurn = 0
     private commands: CommandDataBaseType
     private enemyData: EnemyInfo
-    private additionalEnemyData: EnemyInfo[] = []
+    private allEnemyData: EnemyInfo[] = []
+    private enemyQuantity: number
     private spriteKey: string
     private enemyFrame: string
     private enemyID: string
@@ -38,8 +39,19 @@ export class BattleScene extends Phaser.Scene {
         this.spriteKey = info.spriteKey
         this.enemyFrame = info.frame
         this.enemyID = info.id_map
-        console.log(this.enemyData)
-        //ランダムで敵を追加する処理を書く
+        this.allEnemyData.push(this.enemyData)
+        //ランダムで敵を追加する処理
+        if(this.enemyData.co_spawn != undefined){
+            if(this.enemyData.max_co_spawn == undefined){
+                this.enemyData.max_co_spawn = 3
+            }
+            this.enemyQuantity = this.getRandomInt(0,this.enemyData.max_co_spawn)
+            for(let i=0;i<this.enemyQuantity;i++){
+                let index = this.getRandomInt(0,this.enemyData.co_spawn.length-1)
+                let tmp_enemyData = enemyDB[this.enemyData.co_spawn[index]]
+                this.allEnemyData.push(tmp_enemyData)
+            }
+        }
     }
 
     preload(){
@@ -49,10 +61,12 @@ export class BattleScene extends Phaser.Scene {
         else if(this.enemyData.backImgLocation != undefined){
             this.load.image('background',this.enemyData.backImgLocation)
         }
-        if(this.enemyData.enemyImgLocation != undefined){
-            this.load.image('enemy',this.enemyData.enemyImgLocation)
-        }
-        //ランダムで追加した敵をpreloadする処理を書く
+        //追加した敵素材をpreloadする
+        this.allEnemyData.forEach((data,index)=>{
+            if(data.enemyImgLocation != undefined){
+                this.load.image('enemy'+index.toString(),this.enemyData.enemyImgLocation)
+            }
+        })
     }
 
     create(){
@@ -74,14 +88,9 @@ export class BattleScene extends Phaser.Scene {
         const text2 = this.add.text(width*0.7,height*0.8,'X: Escape',fontStype)
 
         //TODO 要変更
-        if(this.enemyData.enemyImgLocation != undefined){
-            const enemySprite = this.add.image(width*0.5,height*0.5,'enemy')
-            enemySprite.scale = 4.0
-        }
-        else if(this.enemyData.enemyImgLocation == undefined){
-            const enemySprite = this.add.image(width*0.5,height*0.5,this.spriteKey,this.enemyFrame)
-            enemySprite.scale = 4.0
-        }
+        this.setUpEnemy()
+
+        console.log(this.enemies.length,this.enemies,this.allEnemyData)
         this.cameras.main.fadeIn(400)
 
         eventCenter.on('return',()=>{
@@ -90,6 +99,64 @@ export class BattleScene extends Phaser.Scene {
         eventCenter.on('command-selected',(command: Command)=>{
             this.commandHandler(command)
         })
+        this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
+            this.allEnemyData.length = 0
+            this.enemies.length = 0
+        })
+    }
+    /**
+     * Place images of all the enemy.
+     * @param scale sprite scale number
+     */
+    private setUpEnemy(scale = 4.0){
+        const{ width, height } = this.scale
+        let margin = 0
+        if(this.allEnemyData.length > 2){
+            margin = 40
+            let num = (this.enemyQuantity-1)/2
+            this.allEnemyData.slice(1).forEach((data,index)=>{
+                if(data.enemyImgLocation != undefined){
+                    const enemySprite = this.add.image(width*0.5-num*margin*4+((this.enemyQuantity-1)-index)*(margin*4),height*0.5-margin,'enemy'+index.toString())
+                    enemySprite.scale = 4.0
+                    this.enemies.push(enemySprite)
+                }
+                else if(this.enemyData.enemyImgLocation == undefined){
+                    const enemySprite = this.add.image(width*0.5-num*margin*4+((this.enemyQuantity-1)-index)*(margin*4),height*0.5-margin,this.spriteKey,data.enemyAtlasFrame)
+                    enemySprite.scale = 4.0
+                    this.enemies.push(enemySprite)
+                }
+            })
+            this.enemies = this.enemies.reverse()
+        }
+        if(this.allEnemyData.length == 2){
+            margin = 40
+            let num = this.enemyQuantity/2
+            this.allEnemyData.forEach((data,index)=>{
+                if(data.enemyImgLocation != undefined){
+                    const enemySprite = this.add.image(width*0.5-num*margin*4+(this.enemyQuantity-index)*(margin*4),height*0.5,'enemy'+index.toString())
+                    enemySprite.scale = 4.0
+                    this.enemies.push(enemySprite)
+                }
+                else if(data.enemyImgLocation == undefined){
+                    const enemySprite = this.add.image(width*0.5-num*margin*4+(this.enemyQuantity-index)*(margin*4),height*0.5,this.spriteKey,data.enemyAtlasFrame)
+                    enemySprite.scale = 4.0
+                    this.enemies.push(enemySprite)
+                }
+            })
+        }
+        else{
+            if(this.enemyData.enemyImgLocation != undefined){
+                const enemySprite = this.add.image(width*0.5,height*0.5+margin,'enemy0')
+                enemySprite.scale = 4.0
+                this.enemies.push(enemySprite)
+            }
+            else if(this.enemyData.enemyImgLocation == undefined){
+                const enemySprite = this.add.image(width*0.5,height*0.5+margin,this.spriteKey,this.enemyFrame)
+                enemySprite.scale = 4.0
+                this.enemies.push(enemySprite)
+            }
+            this.enemies = this.enemies.reverse()
+        }
     }
 
     update(){
@@ -133,5 +200,13 @@ export class BattleScene extends Phaser.Scene {
 
     increaseTurn(){
 
+    }
+    private getRandomInt(min: number, max: number) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    private formula(n: number){
+        return ( 2*n + 1 + (-1)**(n+1) )/4
     }
 }

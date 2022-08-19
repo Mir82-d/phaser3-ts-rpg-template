@@ -7,7 +7,8 @@ import { Command } from "./Choice"
  * @mp enemy magic point
  * @commands the base command of enemy
  * @magics the magic(consume mp) command of enemy
- * @co_spawn the id(s) array of the enemy that spawns with this enemy
+ * @co_spawn the id(s) array of enemy that spawns with this enemy
+ * @max_co_spawn maximum number of enemies spawning together 
  * @bgmLocation bgm file path location
  * @glslLocation glsl file path location
  * @shaderName the shader name of glsl file
@@ -23,10 +24,12 @@ export type EnemyInfo = {
     commands: Command[],
     magics?: Command[],
     co_spawn?: string[],
+    max_co_spawn?: number,
     bgmLocation?: string,
     glslLocation?: string,
     shaderName?: string,
     backImgLocation?: string,
+    enemyAtlasFrame?: string,
     enemyImgLocation?: string,
     enemyImgScale?: number,
 }
