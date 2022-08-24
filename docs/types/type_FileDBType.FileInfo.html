@@ -14,7 +14,7 @@
 <li><a href="../modules/type_FileDBType.html">type/FileDBType</a></li>
 <li><a href="type_FileDBType.FileInfo.html">FileInfo</a></li></ul>
 <h1>Type alias FileInfo</h1></div>
-<div class="tsd-signature">File<wbr/>Info<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>enemyAtlasLocation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>enemySpriteKey<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>enemySpriteLocation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>jsonKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>jsonLocation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>mapName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>settingID<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>tileKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>tilesetLocation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
+<div class="tsd-signature">File<wbr/>Info<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>bgmID<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>bgmLocation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>enemyAtlasLocation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>enemySpriteKey<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>enemySpriteLocation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>jsonKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>jsonLocation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>mapName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>settingID<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>tileKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>tilesetLocation<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 <div class="tsd-comment tsd-typography"><p>The type of file path information.</p>
 
 <h3>Tileset Location</h3><p>the file path of tileset image</p>
@@ -38,6 +38,10 @@
 <div class="tsd-type-declaration">
 <h4>Type declaration</h4>
 <ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> bgmID<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5></li>
+<li class="tsd-parameter">
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> bgm<wbr/>Location<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5></li>
 <li class="tsd-parameter">
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> enemy<wbr/>Atlas<wbr/>Location<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span></h5></li>
 <li class="tsd-parameter">
@@ -82,11 +86,13 @@
 <li class="tsd-kind-module"><a href="../modules/class_dungeonMap.html">class/dungeon<wbr/>Map</a></li>
 <li class="tsd-kind-module"><a href="../modules/class_mapManager.html">class/map<wbr/>Manager</a></li>
 <li class="tsd-kind-module"><a href="../modules/config.html">config</a></li>
+<li class="tsd-kind-module"><a href="../modules/data_characterDB.html">data/characterDB</a></li>
 <li class="tsd-kind-module"><a href="../modules/data_commandDB.html">data/commandDB</a></li>
 <li class="tsd-kind-module"><a href="../modules/data_dialogDB.html">data/dialogDB</a></li>
 <li class="tsd-kind-module"><a href="../modules/data_enemyDB.html">data/enemyDB</a></li>
 <li class="tsd-kind-module"><a href="../modules/data_fileDB.html">data/fileDB</a></li>
 <li class="tsd-kind-module"><a href="../modules/interfaces_image_interface.html">interfaces/image.interface</a></li>
+<li class="tsd-kind-module"><a href="../modules/logic_BattleSystem.html">logic/<wbr/>Battle<wbr/>System</a></li>
 <li class="tsd-kind-module"><a href="../modules/main.html">main</a></li>
 <li class="tsd-kind-module"><a href="../modules/objects_Animation.html">objects/<wbr/>Animation</a></li>
 <li class="tsd-kind-module"><a href="../modules/objects_ButtonSelector.html">objects/<wbr/>Button<wbr/>Selector</a></li>
@@ -102,12 +108,15 @@
 <li class="tsd-kind-module"><a href="../modules/scenes_TestMap2.html">scenes/<wbr/>Test<wbr/>Map2</a></li>
 <li class="tsd-kind-module"><a href="../modules/scenes_TitleMenu.html">scenes/<wbr/>Title<wbr/>Menu</a></li>
 <li class="tsd-kind-module"><a href="../modules/scenes_gameTest.html">scenes/game<wbr/>Test</a></li>
+<li class="tsd-kind-module"><a href="../modules/type_CharacerDatabaseType.html">type/<wbr/>Characer<wbr/>Database<wbr/>Type</a></li>
 <li class="tsd-kind-module"><a href="../modules/type_Choice.html">type/<wbr/>Choice</a></li>
 <li class="tsd-kind-module"><a href="../modules/type_CommandDataType.html">type/<wbr/>Command<wbr/>Data<wbr/>Type</a></li>
 <li class="tsd-kind-module"><a href="../modules/type_CommandDatabaseType.html">type/<wbr/>Command<wbr/>Database<wbr/>Type</a></li>
 <li class="tsd-kind-module"><a href="../modules/type_EnemyDatabaseType.html">type/<wbr/>Enemy<wbr/>Database<wbr/>Type</a></li>
 <li class="current tsd-kind-module"><a href="../modules/type_FileDBType.html">type/<wbr/>FileDBType</a></li>
 <li class="tsd-kind-module"><a href="../modules/type_MovementType.html">type/<wbr/>Movement<wbr/>Type</a></li>
+<li class="tsd-kind-module"><a href="../modules/type_SaveFileType.html">type/<wbr/>Save<wbr/>File<wbr/>Type</a></li>
+<li class="tsd-kind-module"><a href="../modules/type_SoundDatabaseType.html">type/<wbr/>Sound<wbr/>Database<wbr/>Type</a></li>
 <li class="tsd-kind-module"><a href="../modules/type_Timeline.html">type/<wbr/>Timeline</a></li>
 <li class="tsd-kind-module"><a href="../modules/type_Timelines.html">type/<wbr/>Timelines</a></li>
 <li class="tsd-kind-module"><a href="../modules/util_BattleMenu_e.html">util/<wbr/>Battle<wbr/>Menu_<wbr/>e</a></li>
