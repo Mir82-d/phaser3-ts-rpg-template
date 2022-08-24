@@ -117,12 +117,12 @@ export class BattleScene extends Phaser.Scene {
             this.allEnemyData.slice(1).forEach((data,index)=>{
                 if(data.enemyImgLocation != undefined){
                     const enemySprite = this.add.image(width*0.5-num*margin*4+((this.enemyQuantity-1)-index)*(margin*4),height*0.5-margin,'enemy'+index.toString())
-                    enemySprite.scale = 4.0
+                    enemySprite.scale = scale
                     this.enemies.push(enemySprite)
                 }
                 else if(this.enemyData.enemyImgLocation == undefined){
                     const enemySprite = this.add.image(width*0.5-num*margin*4+((this.enemyQuantity-1)-index)*(margin*4),height*0.5-margin,this.spriteKey,data.enemyAtlasFrame)
-                    enemySprite.scale = 4.0
+                    enemySprite.scale = scale
                     this.enemies.push(enemySprite)
                 }
             })
@@ -134,12 +134,12 @@ export class BattleScene extends Phaser.Scene {
             this.allEnemyData.forEach((data,index)=>{
                 if(data.enemyImgLocation != undefined){
                     const enemySprite = this.add.image(width*0.5-num*margin*4+(this.enemyQuantity-index)*(margin*4),height*0.5,'enemy'+index.toString())
-                    enemySprite.scale = 4.0
+                    enemySprite.scale = scale
                     this.enemies.push(enemySprite)
                 }
                 else if(data.enemyImgLocation == undefined){
                     const enemySprite = this.add.image(width*0.5-num*margin*4+(this.enemyQuantity-index)*(margin*4),height*0.5,this.spriteKey,data.enemyAtlasFrame)
-                    enemySprite.scale = 4.0
+                    enemySprite.scale = scale
                     this.enemies.push(enemySprite)
                 }
             })
@@ -205,8 +205,5 @@ export class BattleScene extends Phaser.Scene {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-    private formula(n: number){
-        return ( 2*n + 1 + (-1)**(n+1) )/4
     }
 }

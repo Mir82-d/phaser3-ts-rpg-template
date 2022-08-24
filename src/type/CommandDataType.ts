@@ -9,5 +9,5 @@ export type CommandDataType = {
     name: string
     commands: Command[]
     magics: Command[]
-    healMagics: Command[]
+    healMagics?: Command[]
 }

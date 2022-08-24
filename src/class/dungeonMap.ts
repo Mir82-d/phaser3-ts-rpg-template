@@ -100,6 +100,7 @@ export class DungeonMap extends Phaser.Scene {
                     sprite: playerSprite,
                     walkingAnimationMapping: 6,
                     startPosition:this.startPos,
+                    facingDirection:this.startDire,
                     charLayer: "playerField",
                 },
                 {
@@ -107,6 +108,7 @@ export class DungeonMap extends Phaser.Scene {
                     sprite: alySpr,
                     walkingAnimationMapping: 1,
                     startPosition:this.startPos,
+                    facingDirection:this.startDire,
                     charLayer: "playerField",
                     collides: false,
                 },
@@ -115,6 +117,7 @@ export class DungeonMap extends Phaser.Scene {
                     sprite: alySpr2,
                     walkingAnimationMapping: 2,
                     startPosition:this.startPos,
+                    facingDirection:this.startDire,
                     charLayer: "playerField",
                     collides: false,
                 },
@@ -123,6 +126,7 @@ export class DungeonMap extends Phaser.Scene {
                     sprite: alySpr3,
                     walkingAnimationMapping: 3,
                     startPosition:this.startPos,
+                    facingDirection:this.startDire,
                     charLayer: "playerField",
                     collides: false,
                 },
@@ -371,6 +375,7 @@ export class DungeonMap extends Phaser.Scene {
             sprite: npcSpr,
             walkingAnimationMapping: mapping,
             startPosition: startPos,
+            facingDirection: Direction.DOWN,
             charLayer: "playerField",
         });
     }
