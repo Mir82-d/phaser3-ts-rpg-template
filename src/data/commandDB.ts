@@ -3,12 +3,12 @@ import { CommandDataBaseType } from "../type/CommandDataBaseType";
 //TODO
 export const commandDatabase: CommandDataBaseType = {
     ally1:{
-        name:'テスト1',
+        name:"テスト1",
         commands:[
-            {text: 'たたかう', commandID: 'fight'},
-            {text: 'まほう', commandID: 'magic'},
-            {text: 'ガード', commandID: 'guard'},
-            {text: 'にげる', commandID: 'escape'},
+            {text: "たたかう", commandID: "fight"},
+            {text: "まほう", commandID: "magic"},
+            {text: "ガード", commandID: "guard"},
+            {text: "にげる", commandID: "escape"},
         ],
         magics:[
             {text: "まほう1",commandID: 'magic1',target: 'enemy',soundID: '',animationID: '',

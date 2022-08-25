@@ -2,8 +2,8 @@ import { Direction } from "grid-engine";
 import * as Phaser from "phaser";
 import { GameConfig } from "../config";
 import { DungeonMap } from "../class/dungeonMap";
-import { TestMap2 } from "./TestMap2";
 import { MovementType } from "../type/MovementType";
+import { sceneDB } from "../data/sceneDB";
 
 export class TestMap extends DungeonMap{
 
@@ -23,7 +23,7 @@ export class TestMap extends DungeonMap{
     }
 
     public override mapTransition(): void {
-        super.setTransitionPoint({x: 19,y: 9},Direction.UP,'testMap2',{x: 14,y: 39},Direction.UP,TestMap2)
+        super.setTransitionPoint({x: 19,y: 9},Direction.UP,'testMap2',{x: 14,y: 39},Direction.UP,sceneDB.testMap2)
     } 
-    
+
 }

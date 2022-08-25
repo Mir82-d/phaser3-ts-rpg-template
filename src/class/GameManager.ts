@@ -1,17 +1,18 @@
 import { Direction, Position } from "grid-engine";
 import * as Phaser from "phaser";
 import eventCenter from "../util/EventCenter";
-import { fileDB } from "../data/fileDB";
 import { CharacterDatabaseType, CharInfo } from "../type/CharacerDatabaseType";
 import { CharacterDB } from "../data/characterDB";
 import { SaveFileType } from "../type/SaveFileType";
+import { DataManager } from "./DataManager";
+import { sceneDB } from "../data/sceneDB";
 
-export class MapManager extends Phaser.Scene{
+export class GameManager extends Phaser.Scene{
 
     private mapKey: string
     private startPosition: Position
     private startDirection: Direction
-    private startScene: Phaser.Scene
+    private startScene: typeof Phaser.Scene
 
     private charDataBase: CharacterDatabaseType
     private saveData: SaveFileType = {
@@ -20,16 +21,13 @@ export class MapManager extends Phaser.Scene{
         startDirection: null,
         startPosition: null
     }
+    private dataManager: DataManager = new DataManager()
 
-    init(data: { key: string; pos: Position; dire: Direction; scene: Phaser.Scene}){
-        this.mapKey = data.key
-        this.startPosition = data.pos
-        this.startDirection = data.dire
-        this.startScene = data.scene
+    init(){
+        this.initializeStatus()
     }
 
     create(){
-        this.initializeStatus()
         //for the first time
         this.loadMap()
         
@@ -80,24 +78,10 @@ export class MapManager extends Phaser.Scene{
      */
     private loadMap(){
         this.scene.add("map", this.startScene, false);
-        this.scene.launch("map",this.getDataInfo(this.mapKey,this.startPosition,this.startDirection))
+        this.scene.launch("map",this.dataManager.getDataInfo(this.mapKey,this.startPosition,this.startDirection))
     }
     /**
-     * Get information of file path, position and direction.
-     * マップを読み込むときの情報を取り出す
-     * @param mapKey 
-     * @param startPosition 
-     * @param startDirection 
-     */
-    public getDataInfo(mapKey: string, startPosition: Position, startDirection: Direction){
-        let fileInfo = fileDB[mapKey]
-        return {
-            data:fileInfo,
-            pos:{startPos: startPosition, startDire: startDirection}
-        }
-    }
-    /**
-     * Initialize Character status and save/load json file.
+     * Initialize all status and save/load json file.
      * @param first is firstly launch game or not
      */
     private initializeStatus(first = true){
@@ -108,6 +92,12 @@ export class MapManager extends Phaser.Scene{
             this.saveData.startPosition = {x: 15,y: 21}
             this.saveData.startDirection = Direction.UP
             localStorage.setItem('saveFile',JSON.stringify(this.saveData))
+            localStorage.setItem('tmp_status',JSON.stringify(this.charDataBase))
+
+            this.mapKey = this.saveData.mapID
+            this.startPosition = this.saveData.startPosition
+            this.startDirection = this.saveData.startDirection
+            this.startScene = sceneDB.testMap
         }
         else{
             try{
@@ -118,55 +108,5 @@ export class MapManager extends Phaser.Scene{
             }
             //
         }
-    }
-    /**
-     * Update Character status and save data to localStorage.
-     * @param charData 
-     * @param mapID 
-     * @param pos 
-     * @param dire 
-     */
-    public saveStatus(charData: CharacterDatabaseType,mapID: string,pos: Position, dire: Direction){
-        //TODO
-        this.charDataBase = charData
-        this.saveData.status = this.charDataBase
-        this.saveData.mapID = mapID
-        this.saveData.startPosition = pos
-        this.saveData.startDirection = dire
-        localStorage.setItem('saveFile',JSON.stringify(this.saveData))
-    }
-    /**
-     * Load save data from localStorage.
-     */
-    public loadStatus(){
-        //TODO
-        try{
-            this.saveData = JSON.parse(localStorage.getItem('saveFile'))
-            console.log(this.saveData)
-        }
-        catch{
-            console.error('Could not load save file.')
-        }
-    }
-    /**
-     * Get character status from current loaded save data.
-     * @returns 
-     */
-    public getStatus(){
-        return this.saveData.status
-    }
-    /**
-     * Just update character status without saving data to localStorage.
-     * @param charData 
-     * @param mapID 
-     * @param pos 
-     * @param dire 
-     */
-    public updateStatus(charData: CharacterDatabaseType,mapID: string,pos: Position, dire: Direction){
-        this.charDataBase = charData
-        this.saveData.status = this.charDataBase
-        this.saveData.mapID = mapID
-        this.saveData.startPosition = pos
-        this.saveData.startDirection = dire
     }
 }

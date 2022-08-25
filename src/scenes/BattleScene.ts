@@ -1,8 +1,10 @@
 import * as Phaser from "phaser";
+import { DataManager } from "../class/DataManager";
 import { GameConfig } from "../config";
 import { commandDatabase } from "../data/commandDB";
 import { enemyDB } from "../data/enemyDB";
 import { InGameMenu } from "../objects/InGameMenu";
+import { CharacterDatabaseType } from "../type/CharacerDatabaseType";
 import { Command } from "../type/Choice";
 import { CommandDataBaseType } from "../type/CommandDataBaseType";
 import { EnemyDatabaseType, EnemyInfo } from "../type/EnemyDatabaseType";
@@ -14,8 +16,11 @@ export class BattleScene extends Phaser.Scene {
     private z_key!: Phaser.Input.Keyboard.Key
     private x_key!: Phaser.Input.Keyboard.Key
 
+    private dataManager: DataManager
+
     private allyTurn = 0
     private commands: CommandDataBaseType
+    private characterData: CharacterDatabaseType
     private enemyData: EnemyInfo
     private allEnemyData: EnemyInfo[] = []
     private enemyQuantity: number
@@ -30,11 +35,15 @@ export class BattleScene extends Phaser.Scene {
 
     constructor(){
         super(GameConfig)
+        this.dataManager = new DataManager()
         this.commands = commandDatabase
-        
     }
 
     init(info: {id: string; frame: string; id_map: string; spriteKey: string}){
+        //character data
+        this.characterData = this.dataManager.getStatus()
+        console.log(this.characterData)
+
         this.enemyData = enemyDB[info.id]
         this.spriteKey = info.spriteKey
         this.enemyFrame = info.frame

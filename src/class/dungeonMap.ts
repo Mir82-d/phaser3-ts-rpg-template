@@ -2,10 +2,9 @@ import { GridEngine, MovementInfo, NumberOfDirections, Position } from "grid-eng
 import { Direction } from "grid-engine";
 import eventCenter from "../util/EventCenter";
 import * as Phaser from "phaser";
-import { MapManager } from "./mapManager";
-import { GameConfig } from "../config";
 import { FileDBType, FileInfo } from "../type/fileDBType";
 import { MovementType, MTInfo} from "../type/MovementType";
+import { DataManager } from "./DataManager";
 
 export class DungeonMap extends Phaser.Scene {
 
@@ -31,7 +30,7 @@ export class DungeonMap extends Phaser.Scene {
 
     private charIDs: string[] = []
     private enemyIDs: string[] = []
-    private mapManager: MapManager
+    private dataManager: DataManager
 
     public init(obj: {data: FileInfo, pos:{startPos: Position; startDire: Direction;} }){
 
@@ -53,7 +52,7 @@ export class DungeonMap extends Phaser.Scene {
         this.z_key = this.input.keyboard.addKey('Z')
         this.x_key = this.input.keyboard.addKey('X')
         this.c_key = this.input.keyboard.addKey('C')
-        this.mapManager = new MapManager(GameConfig)
+        this.dataManager = new DataManager()
         this.charIDs = ["ally1","ally2","ally3","ally4"]
     }
 
@@ -512,7 +511,7 @@ export class DungeonMap extends Phaser.Scene {
     private loadMap(mapKey:string,pos:Position,dire:Direction,nextScene?:typeof Phaser.Scene){
         const FADE_TIME = 600;
         this.events.emit('fade-out')
-        let info = this.mapManager.getDataInfo(mapKey,pos,dire)
+        let info = this.dataManager.getDataInfo(mapKey,pos,dire)
         if(nextScene == null){
             this.time.delayedCall(FADE_TIME, ()=>{
                 this.scene.restart(info)
@@ -541,7 +540,7 @@ export class DungeonMap extends Phaser.Scene {
         })
         //TODO
         console.log('dbID: '+info[0]+' frame: '+info[1])
-        //BattleSceneに情報を渡して戦闘開始イベント発火（このイベントはMapManagerで定義している）
+        //BattleSceneに情報を渡して戦闘開始イベント発火（このイベントはGameManagerで定義している）
         eventCenter.emit("start-battle",{id: info[0],frame: info[1],id_map: id_map, spriteKey: this.enemySpriteKey})
         this.scene.pause()
     }

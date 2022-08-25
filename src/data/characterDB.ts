@@ -4,7 +4,9 @@ export const CharacterDB: CharacterDatabaseType = {
     ally1: {
         name: "テスト1",
         hp: 100,
+        maxHp: 100,
         mp: 50,
+        maxMp: 50,
         ap: 10,
         exp: 0,
         commandID: "ally1"
@@ -12,7 +14,9 @@ export const CharacterDB: CharacterDatabaseType = {
     ally2: {
         name: "テスト2",
         hp: 100,
+        maxHp: 100,
         mp: 50,
+        maxMp: 50,
         ap: 10,
         exp: 0,
         commandID: "ally2"
@@ -20,7 +24,9 @@ export const CharacterDB: CharacterDatabaseType = {
     ally3: {
         name: "テスト3",
         hp: 100,
+        maxHp: 100,
         mp: 50,
+        maxMp: 50,
         ap: 10,
         exp: 0,
         commandID: "ally3"
@@ -28,7 +34,9 @@ export const CharacterDB: CharacterDatabaseType = {
     ally4: {
         name: "テスト4",
         hp: 100,
+        maxHp: 100,
         mp: 50,
+        maxMp: 50,
         ap: 10,
         exp: 0,
         commandID: "ally4"
