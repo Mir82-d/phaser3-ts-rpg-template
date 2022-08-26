@@ -1,4 +1,5 @@
 import * as Phaser from "phaser";
+import { GameConfig } from './config';
 import { TalkingWindow } from "./util/TalkingWindow";
 import { GameManager } from "./class/GameManager";
 import TitleMenu from "./scenes/TitleMenu";
@@ -31,3 +32,5 @@ export class Game extends Phaser.Game {
         this.scene.start("titleMenu")
     }
 }
+
+export const game = new Game(GameConfig)
