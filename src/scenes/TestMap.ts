@@ -1,7 +1,6 @@
 import { Direction } from "grid-engine";
-import * as Phaser from "phaser";
 import { GameConfig } from "../config";
-import { DungeonMap } from "../class/dungeonMap";
+import { DungeonMap } from "../class/DungeonMap";
 import { MovementType } from "../type/MovementType";
 import { sceneDB } from "../data/sceneDB";
 

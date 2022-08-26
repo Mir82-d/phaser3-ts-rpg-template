@@ -1,9 +1,9 @@
-import { GridEngine, MovementInfo, NumberOfDirections, Position } from "grid-engine";
+import { GridEngine, NumberOfDirections, Position } from "grid-engine";
 import { Direction } from "grid-engine";
 import eventCenter from "../util/EventCenter";
 import * as Phaser from "phaser";
-import { FileDBType, FileInfo } from "../type/fileDBType";
-import { MovementType, MTInfo} from "../type/MovementType";
+import { FileInfo } from "../type/fileDBType";
+import { MovementType} from "../type/MovementType";
 import { DataManager } from "./DataManager";
 
 export class DungeonMap extends Phaser.Scene {

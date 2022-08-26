@@ -1,7 +1,7 @@
 import { Direction, Position } from "grid-engine";
 import * as Phaser from "phaser";
 import eventCenter from "../util/EventCenter";
-import { CharacterDatabaseType, CharInfo } from "../type/CharacerDatabaseType";
+import { CharacterDatabaseType } from "../type/CharacerDatabaseType";
 import { CharacterDB } from "../data/characterDB";
 import { SaveFileType } from "../type/SaveFileType";
 import { DataManager } from "./DataManager";

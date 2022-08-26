@@ -1,6 +1,6 @@
 import { Direction, Position } from "grid-engine";
 import { fileDB } from "../data/fileDB";
-import { CharacterDatabaseType, CharInfo } from "../type/CharacerDatabaseType";
+import { CharacterDatabaseType } from "../type/CharacerDatabaseType";
 import { SaveFileType } from "../type/SaveFileType";
 
 export class DataManager{

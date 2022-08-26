@@ -1,12 +1,10 @@
 import * as Phaser from "phaser";
 import { GameConfig } from './config';
-import { Start } from "./scenes/Start";
 import { GameTest } from "./scenes/GameTest";
 import { TalkingWindow } from "./util/TalkingWindow";
 import { GameManager } from "./class/GameManager";
 import TitleMenu from "./scenes/TitleMenu";
 import { MapMenu } from "./util/MapMenu";
-import { BattleMenu } from "./util/BattleMenu";
 import { MenuTest } from "./util/MenuTest";
 import { LoadingScene } from "./scenes/LoadingScene";
 import { BattleScene } from "./scenes/BattleScene";
@@ -36,7 +34,3 @@ export class Game extends Phaser.Game {
         this.scene.start("titleMenu")
     }
 }
-
-export const game = new Game(GameConfig)
-
-export const sceneManager = new Phaser.Scenes.SceneManager(game,GameConfig)
