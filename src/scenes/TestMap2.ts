@@ -1,8 +1,8 @@
 import { Direction } from "grid-engine";
 import { GameConfig } from "../config";
-import { DungeonMap } from "../class/DungeonMap";
 import { MovementType } from "../type/MovementType";
 import { sceneDB } from "../data/sceneDB";
+import { DungeonMap } from "../class/DungeonMap";
 
 export class TestMap2 extends DungeonMap{
 

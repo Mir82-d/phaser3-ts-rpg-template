@@ -1,6 +1,4 @@
 import * as Phaser from "phaser";
-import { GameConfig } from './config';
-import { GameTest } from "./scenes/GameTest";
 import { TalkingWindow } from "./util/TalkingWindow";
 import { GameManager } from "./class/GameManager";
 import TitleMenu from "./scenes/TitleMenu";
@@ -18,7 +16,6 @@ export class Game extends Phaser.Game {
 
         // シーンにキーを割り振って登録
         //this.scene.add("start", Start, false)
-        this.scene.add("gameTest", GameTest, false)
         this.scene.add("gameManager",GameManager,false)
         this.scene.add("titleMenu",TitleMenu,false)
         this.scene.add("battleScene",BattleScene,false)
