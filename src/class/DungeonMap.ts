@@ -199,14 +199,14 @@ export class DungeonMap extends Phaser.Scene {
             camera.fadeOut(FADE_TIME)
         })
         this.events.once('load-map',(dist: string, distPos: Position, distDire: Direction, scene: typeof Phaser.Scene = null)=>{
-            this.loadMap(dist,distPos,distDire,scene)
-            
             if(this.enemyIDs.length != 0){
                 this.enemyIDs.forEach(charId=>{
                     this.gridEngine.stopMovement(charId)
                 })
             }
             this.enemyIDs.length = 0
+
+            this.loadMap(dist,distPos,distDire,scene)
         })
         this.events.once(Phaser.Scenes.Events.SHUTDOWN,()=>{
             this.events.off('restet-facing-direction')
@@ -508,10 +508,10 @@ export class DungeonMap extends Phaser.Scene {
     public getAreaID(){
         return this.settingID
     }
-    private loadMap(mapKey:string,pos:Position,dire:Direction,nextScene?:typeof Phaser.Scene){
+    private async loadMap(mapKey:string,pos:Position,dire:Direction,nextScene?:typeof Phaser.Scene){
         const FADE_TIME = 600;
         this.events.emit('fade-out')
-        let info = this.dataManager.getDataInfo(mapKey,pos,dire)
+        let info = this.dataManager.getDataInfo(mapKey, pos, dire)
         if(nextScene == null){
             this.time.delayedCall(FADE_TIME, ()=>{
                 this.scene.restart(info)

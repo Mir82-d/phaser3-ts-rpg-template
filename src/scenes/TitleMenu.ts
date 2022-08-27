@@ -1,9 +1,14 @@
 import * as Phaser from "phaser";
+import { soundDB } from "../data/soundDB";
 
 export default class TitleMenu extends Phaser.Scene {
 
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
     private z_key!: Phaser.Input.Keyboard.Key
+    private hoverSe: any
+    private forwardSe: any
+    private errorSe: any
+    private backSe: any
 
     private buttons: Phaser.GameObjects.Image[] = []
     private selectedButtonIndex = 0
@@ -16,7 +21,12 @@ export default class TitleMenu extends Phaser.Scene {
     preload() {
         this.load.atlasXML('ui-texture','assets/img/uipack_rpg_sheet.png','assets/img/uipack_rpg_sheet.xml')
 
-        this.load.glsl('background', 'assets/shaders/background-blue.glsl.js');
+        this.load.glsl('background', 'assets/shaders/background-blue.glsl.js')
+
+        this.load.audio('menu_hover',soundDB["se"].menu_hover.path)
+        this.load.audio('menu_forward',soundDB["se"].menu_forward.path)
+        this.load.audio('menu_error',soundDB["se"].menu_error.path)
+        this.load.audio('menu_back',soundDB["se"].menu_back.path)
     }
 
     create() {
@@ -33,14 +43,21 @@ export default class TitleMenu extends Phaser.Scene {
         title.text = "Game title here"
 
         //play
-        const playButton = this.add.image(width*0.5, height*0.7,'ui-texture','buttonLong_blue.png')
+        const playButton = this.add.image(width*0.5, height*0.65,'ui-texture','buttonLong_blue.png')
         playButton.scaleX = 1.2
         playButton.setInteractive()
 
         this.add.text(playButton.x, playButton.y, 'はじめる').setOrigin(0.5)
 
+        //continue
+        const continueButton = this.add.image(width*0.5, playButton.y+playButton.displayHeight+10, 'ui-texture','buttonLong_blue.png')
+        continueButton.scaleX = 1.2
+        continueButton.setInteractive()
+
+        this.add.text(continueButton.x,continueButton.y, 'つづける').setOrigin(0.5)
+
         //settings
-        const settingButton = this.add.image(width*0.5, playButton.y+playButton.displayHeight+10, 'ui-texture','buttonLong_blue.png')
+        const settingButton = this.add.image(width*0.5, continueButton.y+continueButton.displayHeight+10, 'ui-texture','buttonLong_blue.png')
         settingButton.scaleX = 1.2
         settingButton.setInteractive()
 
@@ -54,15 +71,33 @@ export default class TitleMenu extends Phaser.Scene {
         this.add.text(settingButton.x, creditsButton.y, 'Credits').setOrigin(0.5)
         //push to buttons array
         this.buttons.push(playButton)
+        this.buttons.push(continueButton)
         this.buttons.push(settingButton)
         this.buttons.push(creditsButton)
 
         this.selectButton(0)
 
+        //sound
+        this.hoverSe = this.sound.add('menu_hover')
+        this.errorSe = this.sound.add('menu_error')
+        this.forwardSe = this.sound.add('menu_forward')
+        this.backSe = this.sound.add('menu_back')
+
         playButton.on('selected', () => {
             playButton.setFrame('buttonLong_blue.png')
-            this.scene.start('gameManager')
+            this.scene.start('gameManager',{isFirst: true})
             this.scene.stop()
+        })
+        continueButton.on('selected', () => {
+            continueButton.setFrame('buttonLong_blue.png')
+            //TODO
+            if(localStorage.getItem('saveFile')==null){
+                console.error("Save data does not exits.")
+            }
+            else{
+                this.scene.start('gameManager',{isFirst: false})
+                this.scene.stop()
+            }
         })
         settingButton.on('selected', () => {
             settingButton.setFrame('buttonLong_blue.png')
@@ -77,6 +112,9 @@ export default class TitleMenu extends Phaser.Scene {
         playButton.on('pressing', () => {
             playButton.setFrame('buttonLong_blue_pressed.png')
         })
+        continueButton.on('pressing', () => {
+            continueButton.setFrame('buttonLong_blue_pressed.png')
+        })
         settingButton.on('pressing', () => {
             settingButton.setFrame('buttonLong_blue_pressed.png')
         })
@@ -88,14 +126,20 @@ export default class TitleMenu extends Phaser.Scene {
         playButton.on('pointerover',() =>{
             this.selectButton(0)
         })
-        settingButton.on('pointerover',() =>{
+        continueButton.on('pointerover',() =>{
             this.selectButton(1)
         })
-        creditsButton.on('pointerover',() =>{
+        settingButton.on('pointerover',() =>{
             this.selectButton(2)
+        })
+        creditsButton.on('pointerover',() =>{
+            this.selectButton(3)
         })
         playButton.on('pointerup',() =>{
             playButton.emit('selected')
+        })
+        continueButton.on('pointerup',() =>{
+            continueButton.emit('selected')
         })
         settingButton.on('pointerup',() =>{
             settingButton.emit('selected')
@@ -105,6 +149,9 @@ export default class TitleMenu extends Phaser.Scene {
         })
         playButton.on('pointerdown',() =>{
             playButton.emit('pressing')
+        })
+        continueButton.on('pointerdown',() =>{
+            continueButton.emit('pressing')
         })
         settingButton.on('pointerdown',() =>{
             settingButton.emit('pressing')
@@ -119,6 +166,11 @@ export default class TitleMenu extends Phaser.Scene {
             playButton.off('pointerdown')
             playButton.off('pointerup')
             playButton.off('pressing')
+            continueButton.off('selected')
+            continueButton.off('pointerover')
+            continueButton.off('pointerdown')
+            continueButton.off('pointerup')
+            continueButton.off('pressing')
             settingButton.off('selected')
             settingButton.off('pointerover')
             settingButton.off('pointerdown')
@@ -181,12 +233,15 @@ export default class TitleMenu extends Phaser.Scene {
 
         if(up){
             this.selectNextButton(-1)
+            this.hoverSe.play()
         }
         else if(down){
             this.selectNextButton(1)
+            this.hoverSe.play()
         }
         else if(z_up){
             this.confirmSelection()
+            this.forwardSe.play()
         }
         else if(z_down){
             this.confirmPressing()

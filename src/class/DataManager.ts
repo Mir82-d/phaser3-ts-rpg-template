@@ -20,10 +20,9 @@ export class DataManager{
      * @param startDirection 
      */
      public getDataInfo(mapKey: string, startPosition: Position, startDirection: Direction){
-        let fileInfo = fileDB[mapKey]
         return {
-            data:fileInfo,
-            pos:{startPos: startPosition, startDire: startDirection}
+            data: fileDB[mapKey],
+            pos: {startPos: startPosition, startDire: startDirection}
         }
     }
     /**
@@ -34,7 +33,6 @@ export class DataManager{
      * @param dire 
      */
     public saveStatus(charData: CharacterDatabaseType,mapID: string,pos: Position, dire: Direction){
-        //TODO
         this.charDataBase = charData
         this.saveData.status = this.charDataBase
         this.saveData.mapID = mapID
@@ -46,7 +44,6 @@ export class DataManager{
      * Load save data from localStorage.
      */
     public loadStatus(){
-        //TODO
         try{
             this.saveData = JSON.parse(localStorage.getItem('saveFile'))
             console.log(this.saveData)

@@ -23,8 +23,8 @@ export class GameManager extends Phaser.Scene{
     }
     private dataManager: DataManager = new DataManager()
 
-    init(){
-        this.initializeStatus()
+    init( data:{isFirst: boolean} ){
+        this.initializeStatus(data.isFirst)
     }
 
     create(){
@@ -102,9 +102,16 @@ export class GameManager extends Phaser.Scene{
         else{
             try{
                 this.saveData = JSON.parse(localStorage.getItem('saveFile'))
+                this.charDataBase = this.saveData.status
+                localStorage.setItem('tmp_status',JSON.stringify(this.charDataBase))
+                this.mapKey = this.saveData.mapID
+                this.startPosition = this.saveData.startPosition
+                this.startDirection = this.saveData.startDirection
+                this.startScene = sceneDB[this.mapKey as keyof typeof sceneDB]
+                console.log(this.saveData)
             }
             catch{
-                console.error('Could not load save file.')
+                console.error('Could not load save file or save file is broken.')
             }
             //
         }

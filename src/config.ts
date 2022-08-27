@@ -11,6 +11,9 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
   render: {
     antialias: false,
   },
+  audio:{
+    disableWebAudio: true
+  },
   plugins: {
     scene: [
       {
