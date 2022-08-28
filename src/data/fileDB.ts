@@ -1,4 +1,4 @@
-import { FileDBType } from "../type/fileDBType";
+import { FileDBType } from "../type/FileDBType";
 
 export const fileDB: FileDBType = {
     "testMap": {

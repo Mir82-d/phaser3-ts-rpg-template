@@ -6,7 +6,7 @@ import { enemyDB } from "../data/enemyDB";
 import { InGameMenu } from "../objects/InGameMenu";
 import { CharacterDatabaseType } from "../type/CharacerDatabaseType";
 import { Command } from "../type/Choice";
-import { CommandDataBaseType } from "../type/CommandDataBaseType";
+import { CommandDataBaseType } from "../type/CommandDatabaseType";
 import { EnemyDatabaseType, EnemyInfo } from "../type/EnemyDatabaseType";
 import eventCenter from "../util/EventCenter";
 

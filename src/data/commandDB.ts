@@ -1,4 +1,4 @@
-import { CommandDataBaseType } from "../type/CommandDataBaseType";
+import { CommandDataBaseType } from "../type/CommandDatabaseType";
 
 //TODO
 export const commandDatabase: CommandDataBaseType = {

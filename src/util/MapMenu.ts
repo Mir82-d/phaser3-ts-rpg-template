@@ -2,7 +2,7 @@ import * as Phaser from "phaser";
 import { commandDatabase } from "../data/commandDB";
 import { InGameMenu, InGameMenuConfig } from "../objects/InGameMenu"
 import { Command } from "../type/Choice";
-import { CommandDataBaseType } from "../type/CommandDataBaseType";
+import { CommandDataBaseType } from "../type/CommandDatabaseType";
 import eventCenter from "./EventCenter";
 
 export class MapMenu extends Phaser.Scene {
